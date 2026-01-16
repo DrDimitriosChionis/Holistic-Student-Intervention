@@ -1,57 +1,16 @@
-FILE package.json
-{
-  "name": "foititiki-olistiki",
-  "version": "1.0.0",
-  "type": "module",
-  "main": "server.js",
-  "scripts": {
-    "start": "node server.js"
-  },
-  "dependencies": {
-    "docx": "^9.0.0",
-    "dotenv": "^16.4.5",
-    "express": "^4.19.2",
-    "nodemailer": "^6.9.14"
-  }
-}
-
-FILE .env.example
-PORT=3000
-TO_EMAIL=dchionis10@gmail.com
-
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USER=YOUR_GMAIL_ADDRESS
-SMTP_PASS=YOUR_GMAIL_APP_PASSWORD
-SMTP_FROM=YOUR_GMAIL_ADDRESS
-
-FILE server.js
-import express from "express";
-import nodemailer from "nodemailer";
-import dotenv from "dotenv";
-import { Document, Packer, Paragraph, TextRun, HeadingLevel } from "docx";
-
-dotenv.config();
-
-const app = express();
-app.use(express.json({ limit: "1mb" }));
-
-const PORT = Number(process.env.PORT || 3000);
-const TO_EMAIL = process.env.TO_EMAIL || "dchionis10@gmail.com";
-
-function htmlPage() {
-  return `<!doctype html>
+<!doctype html>
 <html lang="el">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Φοιτητική Ολιστική Συμπεριφορική Παρέμβαση</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 24px; max-width: 980px; }
+    body { font-family: Arial, sans-serif; margin: 22px; max-width: 980px; }
     h1 { margin: 0 0 8px 0; }
-    h2 { margin: 0 0 10px 0; }
-    .lead { margin: 0 0 18px 0; line-height: 1.35; }
-    .card { border: 1px solid #ddd; border-radius: 10px; padding: 16px; margin: 12px 0; }
+    h2 { margin: 18px 0 10px 0; }
+    p { line-height: 1.35; }
+    .lead { margin: 0 0 16px 0; }
+    .card { border: 1px solid #ddd; border-radius: 10px; padding: 14px; margin: 12px 0; }
     .row { display: flex; gap: 12px; flex-wrap: wrap; }
     .field { flex: 1; min-width: 220px; }
     label { display: block; font-size: 14px; margin: 6px 0; }
@@ -59,7 +18,7 @@ function htmlPage() {
       width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px;
     }
     textarea { min-height: 90px; }
-    .item { padding: 10px; border-top: 1px solid #eee; }
+    .item { padding: 10px 0; border-top: 1px solid #eee; }
     .item:first-child { border-top: 0; }
     .scale { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
     .scale label { display: inline-flex; align-items: center; gap: 6px; margin: 0; }
@@ -72,6 +31,8 @@ function htmlPage() {
     .results { background: #fafafa; border-radius: 10px; padding: 12px; border: 1px solid #eee; }
     .warn { color: #8a2a2a; }
     .ok { color: #1f6f3a; }
+    .small { font-size: 12px; }
+    .hr { height: 1px; background: #eee; margin: 10px 0; }
   </style>
 </head>
 
@@ -86,6 +47,7 @@ function htmlPage() {
 
   <div class="card">
     <h2>Στοιχεία</h2>
+
     <div class="row">
       <div class="field">
         <label>Ονοματεπώνυμο</label>
@@ -113,10 +75,11 @@ function htmlPage() {
 
     <label style="margin-top:10px;">
       <input id="consent" type="checkbox" />
-      Συμφωνώ να σταλεί αναφορά στον Δρ Χιώνη και κατανοώ ότι αυτό δεν είναι ιατρική διάγνωση.
+      Συμφωνώ να παραχθεί αναφορά και να σταλεί email προς τον Δρ Χιώνη
     </label>
 
     <p class="muted">
+      Αυτό δεν είναι ιατρική διάγνωση.  
       Αν υπάρχει άμεσος κίνδυνος ή έντονη κρίση, ζήτησε άμεση βοήθεια από επείγουσες υπηρεσίες.
     </p>
   </div>
@@ -145,13 +108,21 @@ function htmlPage() {
 
     <div class="actions">
       <button id="previewBtn" type="button">Προεπισκόπηση σκορ</button>
-      <button id="submitBtn" type="button">Υποβολή και αποστολή αναφοράς</button>
+      <button id="submitBtn" type="button">Ολοκλήρωση και αναφορά</button>
     </div>
 
     <div id="status"></div>
+
+    <p class="muted small">
+      Με το κουμπί Ολοκλήρωση κατεβαίνει αρχείο .doc.  
+      Μετά ανοίγει email προς dchionis10@gmail.com, και εσύ επισυνάπτεις το αρχείο.  
+      Αυτό γίνεται επειδή ο browser δεν μπορεί να στείλει συνημμένα μόνος του.
+    </p>
   </div>
 
 <script>
+  const DOCTOR_EMAIL = "dchionis10@gmail.com";
+
   const scales = {
     er: {
       title: "Ρύθμιση Συναισθήματος για Μελέτη",
@@ -211,7 +182,7 @@ function htmlPage() {
     const root = document.getElementById(containerId);
     root.innerHTML = "";
 
-    sc.items.forEach(function(txt, idx) {
+    sc.items.forEach((txt, idx) => {
       const itemNo = idx + 1;
       const wrap = document.createElement("div");
       wrap.className = "item";
@@ -246,7 +217,7 @@ function htmlPage() {
   }
 
   function mean(arr) {
-    return arr.reduce(function(a,b){ return a + b; }, 0) / arr.length;
+    return arr.reduce((a,b) => a + b, 0) / arr.length;
   }
 
   function band(score) {
@@ -255,17 +226,98 @@ function htmlPage() {
     return { label: "Υψηλό", cls: "ok" };
   }
 
-  function buildPreviewHtml() {
-    const er = readAnswers("er");
-    const ss = readAnswers("ss");
-    const rr = readAnswers("rr");
-    if (!er || !ss || !rr) return "Συμπλήρωσε όλες τις απαντήσεις για να δεις σκορ.";
+  function practicalMeaning(scaleKey, score) {
+    const b = band(score).label;
 
-    const erM = mean(er);
-    const ssM = mean(ss);
-    const rrM = mean(rr);
-    const overall = mean([erM, ssM, rrM]);
+    if (scaleKey === "er") {
+      if (b === "Χαμηλό") return [
+        "Υπάρχει αυξημένη πιθανότητα μπλοκαρίσματος στην έναρξη μελέτης όταν υπάρχει άγχος.",
+        "Υπάρχει αυξημένη πιθανότητα αποφυγής ή υπερανάλυσης όταν ένα task φαίνεται δύσκολο."
+      ];
+      if (b === "Μέτριο") return [
+        "Υπάρχει λειτουργία αλλά σε ημέρες πίεσης πέφτει η συνέπεια.",
+        "Βοηθά ένα μικρό πρωτόκολλο επανεκκίνησης πριν από κάθε μπλοκ μελέτης."
+      ];
+      return [
+        "Υπάρχει καλή ρύθμιση και η απόδοση εξαρτάται πιο πολύ από σύστημα και ρουτίνα.",
+        "Βοηθά βελτιστοποίηση κανόνων περιβάλλοντος και σαφών μικρών στόχων."
+      ];
+    }
 
+    if (scaleKey === "ss") {
+      if (b === "Χαμηλό") return [
+        "Υπάρχει κίνδυνος να σηκώνει όλο το φορτίο μόνη της και να φθείρεται σιωπηλά.",
+        "Βοηθά να στηθούν δύο σταθερές επαφές και σαφή όρια σε εξαντλητικές σχέσεις."
+      ];
+      if (b === "Μέτριο") return [
+        "Υπάρχει στήριξη αλλά δεν ενεργοποιείται έγκαιρα όταν ανεβαίνει η πίεση.",
+        "Βοηθά πλάνο επικοινωνίας με μικρά αιτήματα και σαφή χρονισμό."
+      ];
+      return [
+        "Υπάρχει λειτουργική στήριξη και μειώνεται το ρίσκο απομόνωσης σε εξεταστικές περιόδους.",
+        "Βοηθά να γίνει η στήριξη πιο πρακτική με ρόλους και συμφωνίες."
+      ];
+    }
+
+    if (scaleKey === "rr") {
+      if (b === "Χαμηλό") return [
+        "Υπάρχει αυξημένη πιθανότητα να χαλάει ο ρυθμός μετά από setback και να αργεί η επανεκκίνηση.",
+        "Βοηθά σταθεροποίηση ύπνου και μικρά βήματα επανόδου με χαμηλή τριβή."
+      ];
+      if (b === "Μέτριο") return [
+        "Υπάρχει επανεκκίνηση αλλά δεν είναι σταθερή όταν συσσωρεύεται κόπωση.",
+        "Βοηθά διαχείριση ενέργειας και κανόνες για περισπασμούς."
+      ];
+      return [
+        "Υπάρχει καλή επανεκκίνηση και η πρόοδος εξαρτάται από monitoring και στόχους.",
+        "Βοηθά εβδομαδιαίο review με δείκτες και SMART στόχους."
+      ];
+    }
+
+    return ["", ""];
+  }
+
+  function followUpPlan(erScore, ssScore, rrScore) {
+    const labels = [band(erScore).label, band(ssScore).label, band(rrScore).label];
+    const lows = labels.filter(x => x === "Χαμηλό").length;
+    const mids = labels.filter(x => x === "Μέτριο").length;
+
+    if (lows >= 2) {
+      return {
+        sessions: 8,
+        frequency: "1 φορά την εβδομάδα",
+        goals: [
+          "SMART 1. 4 ημέρες μελέτη την εβδομάδα, 4 μπλοκ των 25 λεπτών ανά ημέρα, για 4 εβδομάδες.",
+          "SMART 2. Σταθερό ωράριο ύπνου, απόκλιση έως 45 λεπτά, για 14 ημέρες.",
+          "SMART 3. 2 στοχευμένες επαφές στήριξης την εβδομάδα με σαφές αίτημα."
+        ]
+      };
+    }
+
+    if (lows === 1 || mids >= 2) {
+      return {
+        sessions: 6,
+        frequency: "1 φορά την εβδομάδα",
+        goals: [
+          "SMART 1. 3 ημέρες μελέτη την εβδομάδα, 4 μπλοκ των 25 λεπτών, για 3 εβδομάδες.",
+          "SMART 2. Τελετουργικό έναρξης 2 λεπτών πριν από κάθε μπλοκ, για 14 ημέρες.",
+          "SMART 3. Πλάνο ανάκαμψης 20 λεπτών, σε 4 βράδια την εβδομάδα, για 3 εβδομάδες."
+        ]
+      };
+    }
+
+    return {
+      sessions: 4,
+      frequency: "1 φορά ανά 2 εβδομάδες",
+      goals: [
+        "SMART 1. Εβδομαδιαίο review 15 λεπτών με 3 δείκτες, για 8 εβδομάδες.",
+        "SMART 2. Κανόνας κινητού σε ώρες μελέτης, με ένα διάλειμμα ανά 25λεπτο, για 14 ημέρες.",
+        "SMART 3. Στόχος σταθερότητας και όχι έντασης, με μικρές βελτιώσεις, για 4 εβδομάδες."
+      ]
+    };
+  }
+
+  function buildPreviewHtml(erM, ssM, rrM, overall) {
     const erB = band(erM);
     const ssB = band(ssM);
     const rrB = band(rrM);
@@ -274,349 +326,219 @@ function htmlPage() {
     let html = "";
     html += "<div><strong>Σύνολο</strong></div>";
     html += "<div>Γενικό σκορ " + overall.toFixed(2) + ". <span class='" + ovB.cls + "'>" + ovB.label + "</span></div>";
-    html += "<br/>";
+    html += "<div class='hr'></div>";
     html += "<div><strong>Ανά κλίμακα</strong></div>";
     html += "<div>Ρύθμιση συναισθήματος " + erM.toFixed(2) + ". <span class='" + erB.cls + "'>" + erB.label + "</span></div>";
     html += "<div>Κοινωνική στήριξη " + ssM.toFixed(2) + ". <span class='" + ssB.cls + "'>" + ssB.label + "</span></div>";
     html += "<div>Ανθεκτικότητα " + rrM.toFixed(2) + ". <span class='" + rrB.cls + "'>" + rrB.label + "</span></div>";
-    html += "<br/>";
+    html += "<div class='hr'></div>";
     html += "<div class='muted'>Το αποτέλεσμα είναι screening και όχι διάγνωση.</div>";
     return html;
   }
 
-  document.getElementById("previewBtn").addEventListener("click", function() {
-    document.getElementById("resultsBox").innerHTML = buildPreviewHtml();
-  });
-
-  document.getElementById("submitBtn").addEventListener("click", async function() {
-    const statusEl = document.getElementById("status");
-    statusEl.textContent = "";
-
+  function validateAll() {
     const name = document.getElementById("name").value.trim();
     const email = document.getElementById("email").value.trim();
-    const school = document.getElementById("school").value.trim();
-    const year = document.getElementById("year").value.trim();
-    const goal = document.getElementById("goal").value.trim();
-    const notes = document.getElementById("notes").value.trim();
     const consent = document.getElementById("consent").checked;
 
-    if (!name || !email) {
-      statusEl.textContent = "Συμπλήρωσε ονοματεπώνυμο και email.";
-      return;
-    }
-    if (!consent) {
-      statusEl.textContent = "Χρειάζεται συγκατάθεση για αποστολή αναφοράς.";
-      return;
-    }
+    if (!name || !email) return { ok: false, msg: "Συμπλήρωσε ονοματεπώνυμο και email." };
+    if (!consent) return { ok: false, msg: "Χρειάζεται συγκατάθεση για παραγωγή και αποστολή αναφοράς." };
 
     const er = readAnswers("er");
     const ss = readAnswers("ss");
     const rr = readAnswers("rr");
-    if (!er || !ss || !rr) {
-      statusEl.textContent = "Συμπλήρωσε όλες τις απαντήσεις πριν την υποβολή.";
+
+    if (!er || !ss || !rr) return { ok: false, msg: "Συμπλήρωσε όλες τις απαντήσεις πριν την ολοκλήρωση." };
+
+    return { ok: true, name, email, er, ss, rr };
+  }
+
+  function buildReportText(meta, scores) {
+    const now = new Date();
+    const stamp = now.toLocaleString("el-GR");
+
+    const erB = band(scores.erScore).label;
+    const ssB = band(scores.ssScore).label;
+    const rrB = band(scores.rrScore).label;
+    const ovB = band(scores.overall).label;
+
+    const erMeaning = practicalMeaning("er", scores.erScore);
+    const ssMeaning = practicalMeaning("ss", scores.ssScore);
+    const rrMeaning = practicalMeaning("rr", scores.rrScore);
+
+    const plan = followUpPlan(scores.erScore, scores.ssScore, scores.rrScore);
+
+    const lines = [];
+
+    lines.push("Αναφορά Screening Φοιτητικής Ολιστικής Συμπεριφορικής Παρέμβασης");
+    lines.push("Ημερομηνία και ώρα " + stamp);
+    lines.push("");
+    lines.push("Σκοπός αξιολόγησης");
+    lines.push("Η αξιολόγηση στοχεύει σε πρακτικό screening για μελέτη, ανθεκτικότητα και στήριξη.");
+    lines.push("Το αποτέλεσμα δεν αποτελεί ιατρική διάγνωση και δεν αντικαθιστά κλινική εκτίμηση.");
+    lines.push("");
+    lines.push("Στοιχεία");
+    lines.push("Ονοματεπώνυμο " + (meta.name || ""));
+    lines.push("Email " + (meta.email || ""));
+    lines.push("Σχολή ή Τμήμα " + (meta.school || ""));
+    lines.push("Έτος φοίτησης " + (meta.year || ""));
+    lines.push("Στόχος 4 εβδομάδων " + (meta.goal || ""));
+    lines.push("Σημειώσεις " + (meta.notes || ""));
+    lines.push("");
+    lines.push("Τι μετράμε και με τι αντιστοιχεί");
+    lines.push("Αυτή η αξιολόγηση είναι screening και όχι ιατρική διάγνωση.");
+    lines.push("Στόχος είναι να παραχθεί πρακτικό προφίλ για μελέτη και καθημερινότητα.");
+    lines.push("Στόχος είναι να οδηγήσει σε SMART πλάνο και σε follow up, αν χρειάζεται.");
+    lines.push("");
+    lines.push("Άξονας 1 Ρύθμιση και αντιμετώπιση πίεσης");
+    lines.push("Μετράμε πώς ξεκινά η μελέτη όταν υπάρχει στρες.");
+    lines.push("Μετράμε πώς αλλάζει η οπτική όταν κάτι φαίνεται βουνό.");
+    lines.push("Η θεματική αντιστοιχεί εννοιολογικά σε coping και επαναξιολόγηση.");
+    lines.push("");
+    lines.push("Άξονας 2 Κοινωνική στήριξη και ανήκειν");
+    lines.push("Μετράμε πόσο εύκολα ενεργοποιείται στήριξη όταν υπάρχει πίεση.");
+    lines.push("Μετράμε πόσο ασφαλές είναι να μιλήσει χωρίς φόβο κριτικής.");
+    lines.push("Η θεματική αντιστοιχεί εννοιολογικά σε απομόνωση, μοναξιά, και μοτίβα δεσμού.");
+    lines.push("");
+    lines.push("Άξονας 3 Ανάκαμψη και λειτουργική σταθερότητα");
+    lines.push("Μετράμε πόσο γρήγορα γίνεται επανεκκίνηση μετά από setback.");
+    lines.push("Μετράμε πόσο σταθερές είναι ρουτίνες που στηρίζουν ύπνο και συγκέντρωση.");
+    lines.push("Η θεματική αντιστοιχεί εννοιολογικά σε ανάκαμψη, ύπνο, και λειτουργικότητα.");
+    lines.push("");
+    lines.push("Πώς δένει με SARIM");
+    lines.push("Ο άξονας 1 αφορά εκτίμηση πίεσης και άμεση αντίδραση.");
+    lines.push("Ο άξονας 2 αφορά πόρους και κανάλια στήριξης.");
+    lines.push("Ο άξονας 3 αφορά ανάκαμψη και feedback loop μέσα στην εβδομάδα.");
+    lines.push("");
+    lines.push("Σημείωση για την αντιστοίχιση");
+    lines.push("Οι αντιστοιχίες είναι εννοιολογικές και δεν είναι ισοδυναμία τεστ.");
+    lines.push("Τα items είναι πρωτότυπα και είναι φτιαγμένα για εφαρμογή σε φοιτητικό πλαίσιο.");
+    lines.push("");
+    lines.push("Αποτελέσματα");
+    lines.push("Γενικό σκορ " + scores.overall.toFixed(2) + " Επίπεδο " + ovB);
+    lines.push("Ρύθμιση συναισθήματος " + scores.erScore.toFixed(2) + " Επίπεδο " + erB);
+    lines.push("Κοινωνική στήριξη " + scores.ssScore.toFixed(2) + " Επίπεδο " + ssB);
+    lines.push("Ανθεκτικότητα " + scores.rrScore.toFixed(2) + " Επίπεδο " + rrB);
+    lines.push("");
+    lines.push("Τι σημαίνουν πρακτικά");
+    lines.push("Ρύθμιση συναισθήματος");
+    lines.push("1 " + erMeaning[0]);
+    lines.push("2 " + erMeaning[1]);
+    lines.push("");
+    lines.push("Κοινωνική στήριξη");
+    lines.push("1 " + ssMeaning[0]);
+    lines.push("2 " + ssMeaning[1]);
+    lines.push("");
+    lines.push("Ανθεκτικότητα");
+    lines.push("1 " + rrMeaning[0]);
+    lines.push("2 " + rrMeaning[1]);
+    lines.push("");
+    lines.push("Πρόταση follow up");
+    lines.push("Προτεινόμενες συνεδρίες " + plan.sessions);
+    lines.push("Συχνότητα " + plan.frequency);
+    lines.push("Στοχοθεσία SMART");
+    plan.goals.forEach(g => lines.push(g));
+    lines.push("");
+    lines.push("Σημείωση ασφάλειας");
+    lines.push("Αν υπάρχουν ενδείξεις σοβαρής επιβάρυνσης ή κινδύνου, προτείνεται άμεση κλινική εκτίμηση.");
+
+    return lines.join("\n");
+  }
+
+  function downloadDoc(filename, text) {
+    const html = `
+      <html><head><meta charset="utf-8"></head><body>
+      <pre style="font-family: Arial, sans-serif; white-space: pre-wrap;">${escapeHtml(text)}</pre>
+      </body></html>
+    `;
+    const blob = new Blob([html], { type: "application/msword;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+
+    setTimeout(() => URL.revokeObjectURL(url), 4000);
+  }
+
+  function openMailTo(meta, scores) {
+    const subject = encodeURIComponent("Νέα αναφορά Φοιτητικής Ολιστικής Συμπεριφορικής Παρέμβασης");
+    const bodyLines = [];
+    bodyLines.push("Καλησπέρα.");
+    bodyLines.push("Επισυνάπτω την αναφορά screening σε αρχείο .doc.");
+    bodyLines.push("Ονοματεπώνυμο " + (meta.name || ""));
+    bodyLines.push("Email " + (meta.email || ""));
+    bodyLines.push("Γενικό σκορ " + scores.overall.toFixed(2));
+    bodyLines.push("Παρακαλώ δείτε το συνημμένο.");
+    const body = encodeURIComponent(bodyLines.join("\n"));
+    const link = "mailto:" + encodeURIComponent(DOCTOR_EMAIL) + "?subject=" + subject + "&body=" + body;
+    window.location.href = link;
+  }
+
+  function computeScores(er, ss, rr) {
+    const erScore = mean(er);
+    const ssScore = mean(ss);
+    const rrScore = mean(rr);
+    const overall = mean([erScore, ssScore, rrScore]);
+    return { erScore, ssScore, rrScore, overall };
+  }
+
+  document.getElementById("previewBtn").addEventListener("click", () => {
+    const v = validateAll();
+    if (!v.ok) {
+      document.getElementById("resultsBox").innerHTML = escapeHtml(v.msg);
+      return;
+    }
+    const scores = computeScores(v.er, v.ss, v.rr);
+    document.getElementById("resultsBox").innerHTML = buildPreviewHtml(scores.erScore, scores.ssScore, scores.rrScore, scores.overall);
+  });
+
+  document.getElementById("submitBtn").addEventListener("click", async () => {
+    const statusEl = document.getElementById("status");
+    statusEl.textContent = "";
+
+    const v = validateAll();
+    if (!v.ok) {
+      statusEl.textContent = v.msg;
       return;
     }
 
-    const btn = document.getElementById("submitBtn");
-    btn.disabled = true;
-    statusEl.textContent = "Γίνεται αποστολή αναφοράς.";
+    const meta = {
+      name: document.getElementById("name").value.trim(),
+      email: document.getElementById("email").value.trim(),
+      school: document.getElementById("school").value.trim(),
+      year: document.getElementById("year").value.trim(),
+      goal: document.getElementById("goal").value.trim(),
+      notes: document.getElementById("notes").value.trim()
+    };
+
+    const scores = computeScores(v.er, v.ss, v.rr);
+    const reportText = buildReportText(meta, scores);
+
+    const safeName = (meta.name || "report").replace(/[^\p{L}\p{N}\s]/gu, "").trim().slice(0, 60) || "report";
+    const filename = "Αναφορά_" + safeName + ".doc";
+
+    downloadDoc(filename, reportText);
 
     try {
-      const payload = { meta: { name, email, school, year, goal, notes }, answers: { er, ss, rr } };
-      const res = await fetch("/api/submit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
-      if (!res.ok) {
-        const t = await res.text();
-        throw new Error(t || "Σφάλμα υποβολής.");
-      }
-
-      alert("Ευχαριστούμε για την υποβολή. Επικοινωνείστε με τον Δρ Χιώνη παρακαλούμε.");
-      statusEl.textContent = "Ολοκληρώθηκε.";
+      await navigator.clipboard.writeText(reportText);
     } catch (e) {
-      statusEl.textContent = "Αποτυχία αποστολής. Δοκίμασε ξανά.";
-    } finally {
-      btn.disabled = false;
     }
+
+    alert("Ευχαριστούμε για την υποβολή. Επικοινωνείστε με τον Δρ Χιώνη παρακαλούμε.");
+
+    openMailTo(meta, scores);
+
+    statusEl.textContent = "Κατέβηκε η αναφορά και άνοιξε email. Επισύναψε το αρχείο και στείλε.";
   });
 
   renderScale("erItems", "er");
   renderScale("ssItems", "ss");
+  renderScale("rrItems", "ss"); // guard against accidental wrong id call
   renderScale("rrItems", "rr");
 </script>
 </body>
-</html>`;
-}
-
-app.get("/", (req, res) => {
-  res.type("html").send(htmlPage());
-});
-
-function mean(arr) {
-  return arr.reduce((a, b) => a + b, 0) / arr.length;
-}
-
-function band(score) {
-  if (score < 2.6) return "Χαμηλό";
-  if (score < 3.6) return "Μέτριο";
-  return "Υψηλό";
-}
-
-function practicalMeaning(scaleKey, score) {
-  const b = band(score);
-
-  if (scaleKey === "er") {
-    if (b === "Χαμηλό") return [
-      "Υπάρχει αυξημένη πιθανότητα μπλοκαρίσματος στην έναρξη μελέτης όταν υπάρχει άγχος.",
-      "Υπάρχει αυξημένη πιθανότητα αποφυγής ή υπερανάλυσης όταν ένα task φαίνεται δύσκολο."
-    ];
-    if (b === "Μέτριο") return [
-      "Υπάρχει λειτουργία αλλά σε ημέρες πίεσης πέφτει η συνέπεια.",
-      "Βοηθά ένα μικρό πρωτόκολλο επανεκκίνησης πριν από κάθε μπλοκ μελέτης."
-    ];
-    return [
-      "Υπάρχει καλή ρύθμιση και η απόδοση εξαρτάται πιο πολύ από σύστημα και ρουτίνα.",
-      "Βοηθά βελτιστοποίηση κανόνων περιβάλλοντος και σαφών μικρών στόχων."
-    ];
-  }
-
-  if (scaleKey === "ss") {
-    if (b === "Χαμηλό") return [
-      "Υπάρχει κίνδυνος να σηκώνει όλο το φορτίο μόνη της και να φθείρεται σιωπηλά.",
-      "Βοηθά να στηθούν δύο σταθερές επαφές και σαφή όρια σε εξαντλητικές σχέσεις."
-    ];
-    if (b === "Μέτριο") return [
-      "Υπάρχει στήριξη αλλά δεν ενεργοποιείται έγκαιρα όταν ανεβαίνει η πίεση.",
-      "Βοηθά πλάνο επικοινωνίας με μικρά αιτήματα και σαφή χρονισμό."
-    ];
-    return [
-      "Υπάρχει λειτουργική στήριξη και μειώνεται το ρίσκο απομόνωσης σε εξεταστικές περιόδους.",
-      "Βοηθά να γίνει η στήριξη πιο πρακτική με ρόλους και συμφωνίες."
-    ];
-  }
-
-  if (scaleKey === "rr") {
-    if (b === "Χαμηλό") return [
-      "Υπάρχει αυξημένη πιθανότητα να χαλάει ο ρυθμός μετά από setback και να αργεί η επανεκκίνηση.",
-      "Βοηθά σταθεροποίηση ύπνου και μικρά βήματα επανόδου με χαμηλή τριβή."
-    ];
-    if (b === "Μέτριο") return [
-      "Υπάρχει επανεκκίνηση αλλά δεν είναι σταθερή όταν συσσωρεύεται κόπωση.",
-      "Βοηθά διαχείριση ενέργειας και κανόνες για περισπασμούς."
-    ];
-    return [
-      "Υπάρχει καλή επανεκκίνηση και η πρόοδος εξαρτάται από monitoring και στόχους.",
-      "Βοηθά εβδομαδιαίο review με δείκτες και SMART στόχους."
-    ];
-  }
-
-  return ["", ""];
-}
-
-function followUpPlan(erScore, ssScore, rrScore) {
-  const lows = [erScore, ssScore, rrScore].filter(s => band(s) === "Χαμηλό").length;
-  const mids = [erScore, ssScore, rrScore].filter(s => band(s) === "Μέτριο").length;
-
-  if (lows >= 2) {
-    return {
-      sessions: 8,
-      frequency: "1 φορά την εβδομάδα",
-      goals: [
-        "SMART 1. 4 ημέρες μελέτη την εβδομάδα, 4 μπλοκ των 25 λεπτών ανά ημέρα, για 4 εβδομάδες.",
-        "SMART 2. Σταθερό ωράριο ύπνου, απόκλιση έως 45 λεπτά, για 14 ημέρες.",
-        "SMART 3. 2 στοχευμένες επαφές στήριξης την εβδομάδα με σαφές αίτημα."
-      ]
-    };
-  }
-
-  if (lows === 1 || mids >= 2) {
-    return {
-      sessions: 6,
-      frequency: "1 φορά την εβδομάδα",
-      goals: [
-        "SMART 1. 3 ημέρες μελέτη την εβδομάδα, 4 μπλοκ των 25 λεπτών, για 3 εβδομάδες.",
-        "SMART 2. Τελετουργικό έναρξης 2 λεπτών πριν από κάθε μπλοκ, για 14 ημέρες.",
-        "SMART 3. Πλάνο ανάκαμψης 20 λεπτών, σε 4 βράδια την εβδομάδα, για 3 εβδομάδες."
-      ]
-    };
-  }
-
-  return {
-    sessions: 4,
-    frequency: "1 φορά ανά 2 εβδομάδες",
-    goals: [
-      "SMART 1. Εβδομαδιαίο review 15 λεπτών με 3 δείκτες, για 8 εβδομάδες.",
-      "SMART 2. Κανόνας κινητού σε ώρες μελέτης, με ένα διάλειμμα ανά 25λεπτο, για 14 ημέρες.",
-      "SMART 3. Στόχος σταθερότητας και όχι έντασης, με μικρές βελτιώσεις, για 4 εβδομάδες."
-    ]
-  };
-}
-
-function mappingNarrativeParagraphs() {
-  return [
-    new Paragraph({ children: [new TextRun({ text: "Τι μετράμε και με τι αντιστοιχεί", bold: true })] }),
-    new Paragraph("Αυτή η αξιολόγηση είναι screening και όχι ιατρική διάγνωση."),
-    new Paragraph("Στόχος είναι να παραχθεί πρακτικό προφίλ για μελέτη και καθημερινότητα."),
-    new Paragraph("Στόχος είναι να οδηγήσει σε SMART πλάνο και σε follow up, αν χρειάζεται."),
-
-    new Paragraph("Άξονας 1. Ρύθμιση και αντιμετώπιση πίεσης."),
-    new Paragraph("Μετράμε πώς ξεκινά η μελέτη όταν υπάρχει στρες."),
-    new Paragraph("Μετράμε πώς αλλάζει η οπτική όταν κάτι φαίνεται βουνό."),
-    new Paragraph("Η θεματική αντιστοιχεί εννοιολογικά σε coping και επαναξιολόγηση."),
-
-    new Paragraph("Άξονας 2. Κοινωνική στήριξη και ανήκειν."),
-    new Paragraph("Μετράμε πόσο εύκολα ενεργοποιείται στήριξη όταν υπάρχει πίεση."),
-    new Paragraph("Μετράμε πόσο ασφαλές είναι να μιλήσει χωρίς φόβο κριτικής."),
-    new Paragraph("Η θεματική αντιστοιχεί εννοιολογικά σε απομόνωση, μοναξιά, και μοτίβα δεσμού."),
-
-    new Paragraph("Άξονας 3. Ανάκαμψη και λειτουργική σταθερότητα."),
-    new Paragraph("Μετράμε πόσο γρήγορα γίνεται επανεκκίνηση μετά από setback."),
-    new Paragraph("Μετράμε πόσο σταθερές είναι ρουτίνες που στηρίζουν ύπνο και συγκέντρωση."),
-    new Paragraph("Η θεματική αντιστοιχεί εννοιολογικά σε ανάκαμψη, ύπνο, και λειτουργικότητα."),
-
-    new Paragraph("Πώς δένει με SARIM."),
-    new Paragraph("Ο άξονας 1 αφορά εκτίμηση πίεσης και άμεση αντίδραση."),
-    new Paragraph("Ο άξονας 2 αφορά πόρους και κανάλια στήριξης."),
-    new Paragraph("Ο άξονας 3 αφορά ανάκαμψη και feedback loop μέσα στην εβδομάδα."),
-
-    new Paragraph("Σημείωση για την αντιστοίχιση."),
-    new Paragraph("Οι αντιστοιχίες είναι εννοιολογικές και δεν είναι ισοδυναμία τεστ."),
-    new Paragraph("Τα items είναι πρωτότυπα και είναι φτιαγμένα για εφαρμογή σε φοιτητικό πλαίσιο.")
-  ];
-}
-
-async function makeDocx(meta, scores) {
-  const { erScore, ssScore, rrScore, overall } = scores;
-
-  const erMeaning = practicalMeaning("er", erScore);
-  const ssMeaning = practicalMeaning("ss", ssScore);
-  const rrMeaning = practicalMeaning("rr", rrScore);
-
-  const plan = followUpPlan(erScore, ssScore, rrScore);
-
-  const doc = new Document({
-    sections: [{
-      children: [
-        new Paragraph({ text: "Αναφορά Screening Φοιτητικής Ολιστικής Συμπεριφορικής Παρέμβασης", heading: HeadingLevel.HEADING_1 }),
-
-        new Paragraph({ children: [new TextRun({ text: "Σκοπός αξιολόγησης", bold: true })] }),
-        new Paragraph("Η αξιολόγηση στοχεύει σε πρακτικό screening για μελέτη, ανθεκτικότητα και στήριξη."),
-        new Paragraph("Το αποτέλεσμα δεν αποτελεί ιατρική διάγνωση και δεν αντικαθιστά κλινική εκτίμηση."),
-
-        new Paragraph({ children: [new TextRun({ text: "Στοιχεία", bold: true })] }),
-        new Paragraph(`Ονοματεπώνυμο: ${meta.name || ""}`),
-        new Paragraph(`Email: ${meta.email || ""}`),
-        new Paragraph(`Σχολή ή Τμήμα: ${meta.school || ""}`),
-        new Paragraph(`Έτος: ${meta.year || ""}`),
-        new Paragraph(`Στόχος 4 εβδομάδων: ${meta.goal || ""}`),
-        new Paragraph(`Σημειώσεις: ${meta.notes || ""}`),
-
-        new Paragraph(""),
-        ...mappingNarrativeParagraphs(),
-        new Paragraph(""),
-
-        new Paragraph({ children: [new TextRun({ text: "Αποτελέσματα", bold: true })] }),
-        new Paragraph(`Γενικό σκορ: ${overall.toFixed(2)}. Επίπεδο: ${band(overall)}`),
-        new Paragraph(`Ρύθμιση συναισθήματος: ${erScore.toFixed(2)}. Επίπεδο: ${band(erScore)}`),
-        new Paragraph(`Κοινωνική στήριξη: ${ssScore.toFixed(2)}. Επίπεδο: ${band(ssScore)}`),
-        new Paragraph(`Ανθεκτικότητα: ${rrScore.toFixed(2)}. Επίπεδο: ${band(rrScore)}`),
-
-        new Paragraph(""),
-        new Paragraph({ children: [new TextRun({ text: "Τι σημαίνουν πρακτικά", bold: true })] }),
-
-        new Paragraph("Ρύθμιση συναισθήματος"),
-        new Paragraph(`1. ${erMeaning[0]}`),
-        new Paragraph(`2. ${erMeaning[1]}`),
-
-        new Paragraph(""),
-        new Paragraph("Κοινωνική στήριξη"),
-        new Paragraph(`1. ${ssMeaning[0]}`),
-        new Paragraph(`2. ${ssMeaning[1]}`),
-
-        new Paragraph(""),
-        new Paragraph("Ανθεκτικότητα"),
-        new Paragraph(`1. ${rrMeaning[0]}`),
-        new Paragraph(`2. ${rrMeaning[1]}`),
-
-        new Paragraph(""),
-        new Paragraph({ children: [new TextRun({ text: "Πρόταση follow up", bold: true })] }),
-        new Paragraph(`Προτεινόμενες συνεδρίες: ${plan.sessions}`),
-        new Paragraph(`Συχνότητα: ${plan.frequency}`),
-        new Paragraph("Στοχοθεσία SMART"),
-        ...plan.goals.map(g => new Paragraph(g)),
-
-        new Paragraph(""),
-        new Paragraph({ children: [new TextRun({ text: "Σημείωση ασφάλειας", bold: true })] }),
-        new Paragraph("Αν υπάρχουν ενδείξεις σοβαρής επιβάρυνσης ή κινδύνου, προτείνεται άμεση κλινική εκτίμηση.")
-      ]
-    }]
-  });
-
-  return Packer.toBuffer(doc);
-}
-
-async function sendEmailWithAttachment(buffer, meta) {
-  const host = process.env.SMTP_HOST;
-  const port = Number(process.env.SMTP_PORT || 587);
-  const user = process.env.SMTP_USER;
-  const pass = process.env.SMTP_PASS;
-  const from = process.env.SMTP_FROM || user;
-
-  if (!host || !user || !pass) {
-    throw new Error("Missing SMTP settings.");
-  }
-
-  const transporter = nodemailer.createTransport({
-    host,
-    port,
-    secure: false,
-    auth: { user, pass }
-  });
-
-  const safeName = String(meta.name || "report")
-    .replace(/[^\p{L}\p{N}\s]/gu, "")
-    .trim()
-    .slice(0, 60) || "report";
-
-  const filename = `Αναφορά_${safeName}.docx`;
-
-  await transporter.sendMail({
-    from,
-    to: TO_EMAIL,
-    subject: "Νέα αναφορά Φοιτητικής Ολιστικής Συμπεριφορικής Παρέμβασης",
-    text: `Στάλθηκε αναφορά για ${meta.name || ""}. Email συμμετέχοντα: ${meta.email || ""}.`,
-    attachments: [{ filename, content: buffer }]
-  });
-}
-
-app.post("/api/submit", async (req, res) => {
-  try {
-    const meta = req.body?.meta || {};
-    const answers = req.body?.answers || {};
-
-    if (!meta.name || !meta.email) return res.status(400).send("Λείπουν βασικά στοιχεία.");
-    if (!Array.isArray(answers.er) || !Array.isArray(answers.ss) || !Array.isArray(answers.rr)) return res.status(400).send("Λείπουν απαντήσεις.");
-
-    if (answers.er.length !== 8 || answers.ss.length !== 8 || answers.rr.length !== 8) return res.status(400).send("Λάθος πλήθος απαντήσεων.");
-
-    const erScore = mean(answers.er.map(Number));
-    const ssScore = mean(answers.ss.map(Number));
-    const rrScore = mean(answers.rr.map(Number));
-    const overall = mean([erScore, ssScore, rrScore]);
-
-    const buffer = await makeDocx(meta, { erScore, ssScore, rrScore, overall });
-    await sendEmailWithAttachment(buffer, meta);
-
-    return res.status(200).send("OK");
-  } catch (e) {
-    return res.status(500).send("Server error");
-  }
-});
-
-app.listen(PORT, () => {
-  console.log("Running at http://localhost:" + PORT);
-});
-
-END
+</html>
