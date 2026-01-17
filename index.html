@@ -1240,8 +1240,7 @@
       return `<span class="badge"><b style="color:${b.c};">${d.name}</b> ${pct}% ${b.t}</span>`;
     }).join("");
 
-    const cost = plan.sessions * 50;
-    const costText = plan.sessions ? `${plan.sessions} συνεδρίες x 50 ευρώ. Σύνολο ${cost} ευρώ.` : "Δεν προτείνεται follow up.";
+  
 
     profileBox.innerHTML = `
       <div style="display:flex; gap:10px; justify-content:space-between; flex-wrap:wrap;">
@@ -1638,4 +1637,5 @@
 </script>
 </body>
 </html>
+
 
