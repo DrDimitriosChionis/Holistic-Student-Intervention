@@ -1491,7 +1491,7 @@
       `;
     }).join("");
 
-    const radarPng = radarToDataURL();
+   
 
     const html = `
       <html>
@@ -1519,8 +1519,7 @@
         <p><b>Κοντινότερο προφίλ.</b> ${escapeHtml(best.name)}. ${escapeHtml(best.tagline)}</p>
         <p><b>Ομοιότητα μοτίβου.</b> ${(ranked[0].score*100).toFixed(1)}%</p>
 
-        <h2 style="margin:18px 0 8px;">Διάγραμμα αράχνη</h2>
-        ${radarPng ? `<p><img src="${radarPng}" style="width:100%; max-width:650px; border:1px solid #ddd;"/></p>` : `<p>Το διάγραμμα δεν ήταν διαθέσιμο για ενσωμάτωση.</p>`}
+       
 
         <h2 style="margin:18px 0 8px;">Αποτελέσματα ανά διάσταση</h2>
         <table style="width:100%; border-collapse:collapse;">
@@ -1598,7 +1597,7 @@
     renderProfile(meta, scores, ranked);
     drawRadar(scores);
 
-    radarNote.textContent = "Το διάγραμμα ενσωματώνεται και στην αναφορά, ώστε να υπάρχει οπτική εικόνα προφίλ.";
+    
 
     lastComputed = { meta, scores, ranked };
 
