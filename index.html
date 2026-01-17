@@ -4,542 +4,1640 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Φοιτητική Ολιστική Συμπεριφορική Παρέμβαση</title>
+  <meta name="description" content="Φοιτητική Ολιστική Συμπεριφορική Παρέμβαση. Ψυχολογικό mentoring για άγχος εξετάσεων, συγκέντρωση, αναβολή, ανθεκτικότητα, ύπνο, κοινωνική στήριξη. Προφίλ με cosine similarity και εξατομικευμένο SMART πλάνο." />
   <style>
-    body { font-family: Arial, sans-serif; margin: 22px; max-width: 980px; }
-    h1 { margin: 0 0 8px 0; }
-    h2 { margin: 18px 0 10px 0; }
-    p { line-height: 1.35; }
-    .lead { margin: 0 0 16px 0; }
-    .card { border: 1px solid #ddd; border-radius: 10px; padding: 14px; margin: 12px 0; }
-    .row { display: flex; gap: 12px; flex-wrap: wrap; }
-    .field { flex: 1; min-width: 220px; }
-    label { display: block; font-size: 14px; margin: 6px 0; }
-    input[type="text"], input[type="email"], textarea {
-      width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px;
+    :root{
+      --bg:#0b1220;
+      --card:#111a2e;
+      --card2:#0f1730;
+      --text:#e9eefc;
+      --muted:#b8c2e6;
+      --line:rgba(255,255,255,.10);
+      --accent:#7aa7ff;
+      --good:#39d98a;
+      --warn:#ffcc66;
+      --bad:#ff6b6b;
+      --shadow:0 12px 30px rgba(0,0,0,.28);
+      --r:16px;
+      --pad:16px;
     }
-    textarea { min-height: 90px; }
-    .item { padding: 10px 0; border-top: 1px solid #eee; }
-    .item:first-child { border-top: 0; }
-    .scale { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
-    .scale label { display: inline-flex; align-items: center; gap: 6px; margin: 0; }
-    .muted { color: #555; font-size: 13px; }
-    .actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 10px; }
-    button { padding: 12px 16px; border: 0; border-radius: 10px; cursor: pointer; }
-    #submitBtn { background: #111; color: #fff; }
-    #previewBtn { background: #f1f1f1; }
-    #status { margin-top: 10px; font-size: 14px; }
-    .results { background: #fafafa; border-radius: 10px; padding: 12px; border: 1px solid #eee; }
-    .warn { color: #8a2a2a; }
-    .ok { color: #1f6f3a; }
-    .small { font-size: 12px; }
-    .hr { height: 1px; background: #eee; margin: 10px 0; }
+
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Liberation Sans", sans-serif;
+      background: radial-gradient(1200px 700px at 10% 10%, #1a2b5b 0%, rgba(26,43,91,0) 60%),
+                  radial-gradient(1000px 600px at 90% 20%, #2b2a68 0%, rgba(43,42,104,0) 55%),
+                  radial-gradient(900px 650px at 40% 90%, #103e4c 0%, rgba(16,62,76,0) 60%),
+                  var(--bg);
+      color:var(--text);
+    }
+
+    .wrap{
+      max-width:1100px;
+      margin:0 auto;
+      padding:22px 14px 60px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:14px;
+    }
+
+    @media (max-width: 980px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      border:1px solid var(--line);
+      border-radius:var(--r);
+      box-shadow:var(--shadow);
+      padding:var(--pad);
+    }
+
+    .card h1, .card h2, .card h3{
+      margin:0 0 10px;
+      letter-spacing:.2px;
+    }
+
+    .card h1{ font-size:28px; }
+    .card h2{ font-size:18px; }
+    .card h3{ font-size:14px; color:var(--muted); font-weight:600; }
+
+    .lead{
+      font-size:15px;
+      color:var(--muted);
+      line-height:1.55;
+      margin:0;
+    }
+
+    .muted{ color:var(--muted); }
+    .small{ font-size:12px; line-height:1.45; }
+    .pill{
+      display:inline-block;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.12);
+      color:var(--muted);
+      font-size:12px;
+      margin-right:8px;
+      margin-top:8px;
+    }
+
+    .row{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+
+    @media (max-width: 720px){
+      .row{ grid-template-columns: 1fr; }
+    }
+
+    label{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      margin:0 0 6px;
+    }
+
+    input[type="text"], input[type="email"], textarea, select{
+      width:100%;
+      box-sizing:border-box;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.18);
+      color: var(--text);
+      padding:10px 12px;
+      outline:none;
+    }
+
+    textarea{ min-height:92px; resize:vertical; }
+
+    .sep{
+      height:1px;
+      background: var(--line);
+      margin:14px 0;
+    }
+
+    .consent{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      padding:10px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.12);
+    }
+
+    .btn{
+      cursor:pointer;
+      border:none;
+      border-radius:14px;
+      padding:11px 14px;
+      font-weight:700;
+      color:#061126;
+      background: var(--accent);
+      transition: transform .06s ease;
+    }
+    .btn:active{ transform: scale(.99); }
+    .btn.secondary{
+      background: rgba(255,255,255,.10);
+      color: var(--text);
+      border:1px solid var(--line);
+    }
+
+    .btnbar{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+
+    .progressBox{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+      padding:10px 12px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      background: rgba(0,0,0,.12);
+    }
+
+    .progress{
+      width:100%;
+      height:10px;
+      border-radius:999px;
+      background: rgba(255,255,255,.08);
+      overflow:hidden;
+      margin-left:10px;
+    }
+    .bar{
+      height:100%;
+      width:0%;
+      background: var(--accent);
+    }
+
+    .qSection{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px;
+      margin-top:12px;
+      background: rgba(0,0,0,.10);
+    }
+
+    .qTitle{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:flex-start;
+      margin-bottom:10px;
+    }
+
+    .qTitle strong{
+      display:block;
+      font-size:14px;
+    }
+    .qTitle span{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      margin-top:4px;
+      line-height:1.35;
+    }
+
+    .qItem{
+      padding:10px 10px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.08);
+      background: rgba(0,0,0,.14);
+      margin-top:10px;
+    }
+
+    .qItem .text{
+      font-size:13px;
+      line-height:1.4;
+      margin:0 0 10px;
+    }
+
+    .scale{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:flex-start;
+    }
+
+    .scale label{
+      margin:0;
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    .scale .opt{
+      display:flex;
+      gap:6px;
+      align-items:center;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.10);
+      cursor:pointer;
+      user-select:none;
+    }
+
+    .scale input{ accent-color: var(--accent); }
+
+    .hint{
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.45;
+      margin-top:10px;
+    }
+
+    .resultsGrid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:12px;
+    }
+
+    .badge{
+      display:inline-block;
+      padding:6px 10px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      font-size:12px;
+      color:var(--muted);
+      background: rgba(0,0,0,.10);
+      margin-right:8px;
+      margin-top:8px;
+    }
+
+    .kpi{
+      display:grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap:10px;
+      margin-top:10px;
+    }
+
+    @media (max-width: 980px){
+      .kpi{ grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .kpi .box{
+      border:1px solid var(--line);
+      border-radius:14px;
+      background: rgba(0,0,0,.10);
+      padding:10px;
+    }
+
+    .kpi .box b{
+      display:block;
+      font-size:14px;
+      margin-bottom:6px;
+    }
+
+    .kpi .box span{
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.3;
+      display:block;
+    }
+
+    .radarWrap{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px;
+      background: rgba(0,0,0,.10);
+    }
+
+    canvas{
+      width:100%;
+      height:auto;
+      max-height:420px;
+      display:block;
+    }
+
+    details{
+      margin-top:10px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background: rgba(0,0,0,.10);
+      padding:10px;
+    }
+
+    summary{
+      cursor:pointer;
+      color:var(--text);
+      font-weight:700;
+    }
+
+    .mono{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size:12px;
+      color:var(--muted);
+    }
   </style>
 </head>
 
 <body>
-  <h1>Φοιτητική Ολιστική Συμπεριφορική Παρέμβαση</h1>
-
-  <p class="lead">
-    Αυτό είναι screening και πρακτικό προφίλ.  
-    Σου δίνει τρεις δείκτες που επηρεάζουν μελέτη, συνέπεια, και ανάκαμψη.  
-    Σου δίνει προτεραιότητες και ένα πρώτο πλάνο βελτίωσης.
-  </p>
-
-  <div class="card">
-    <h2>Στοιχεία</h2>
-
-    <div class="row">
-      <div class="field">
-        <label>Ονοματεπώνυμο</label>
-        <input id="name" type="text" placeholder="π.χ. Μαρία Παπαδοπούλου" />
-      </div>
-      <div class="field">
-        <label>Email</label>
-        <input id="email" type="email" placeholder="π.χ. maria@email.com" />
-      </div>
-      <div class="field">
-        <label>Σχολή ή Τμήμα</label>
-        <input id="school" type="text" placeholder="π.χ. Ψυχολογία" />
-      </div>
-      <div class="field">
-        <label>Έτος φοίτησης</label>
-        <input id="year" type="text" placeholder="π.χ. 2ο" />
+  <div class="wrap">
+    <div class="card">
+      <h1>Φοιτητική Ολιστική Συμπεριφορική Παρέμβαση</h1>
+      <p class="lead">
+        Προσοχή. Η φοιτητική ζωή συχνά γίνεται πόλεμος ανάμεσα σε άγχος εξετάσεων, αναβολή, και διάσπαση προσοχής.  
+        Ενδιαφέρον. Η παρούσα αξιολόγηση χαρτογραφεί δεξιότητες που επηρεάζουν συγκέντρωση, ύπνο, ανθεκτικότητα, και κοινωνική στήριξη.  
+        Επιθυμία. Ο ή η συμμετέχων λαμβάνει προφίλ δεξιοτήτων με cosine similarity και ένα πρακτικό πλάνο με SMART στόχους.  
+        Δράση. Συμπλήρωση και λήψη αναφοράς. Έπειτα μπορεί να γίνει mentoring σε συνεδρίες για βελτιστοποίηση.
+      </p>
+      <div>
+        <span class="pill">mentoring</span>
+        <span class="pill">stress</span>
+        <span class="pill">focus</span>
+        <span class="pill">sleep</span>
+        <span class="pill">resilience</span>
+        <span class="pill">study performance</span>
       </div>
     </div>
 
-    <label>Στόχος για τις επόμενες 4 εβδομάδες</label>
-    <textarea id="goal" placeholder="π.χ. να διαβάζω 4 ημέρες την εβδομάδα με σταθερό πρόγραμμα"></textarea>
+    <div class="grid" style="margin-top:14px;">
+      <div>
+        <div class="card">
+          <h2>Χειροπιαστά οφέλη</h2>
+          <p class="lead">
+            Ο ή η συμμετέχων βλέπει πού χάνει ενέργεια και πού κερδίζει έδαφος.  
+            Ο ή η συμμετέχων παίρνει μία καθαρή εικόνα για το τι να αλλάξει πρώτα.  
+            Ο ή η συμμετέχων λαμβάνει ένα πλάνο που κουμπώνει σε καθημερινές μικρές πράξεις.
+          </p>
+          <div class="sep"></div>
+          <p class="lead">
+            Η αξιολόγηση είναι screening για ανάπτυξη δεξιοτήτων.  
+            Η αξιολόγηση δεν αντικαθιστά κλινική διάγνωση.  
+            Η αξιολόγηση υποστηρίζει εξατομικευμένη στοχοθεσία και παρακολούθηση.
+          </p>
+        </div>
 
-    <label>Σημειώσεις</label>
-    <textarea id="notes" placeholder="π.χ. τι σε δυσκολεύει πιο πολύ"></textarea>
+        <div class="card" style="margin-top:14px;">
+          <h2>Στοιχεία συμμετέχοντα</h2>
+          <div class="row">
+            <div>
+              <label>Ονοματεπώνυμο</label>
+              <input id="name" type="text" placeholder="π.χ. Μαρία Παπαδοπούλου" />
+            </div>
+            <div>
+              <label>Email συμμετέχοντα</label>
+              <input id="email" type="email" placeholder="π.χ. maria@email.com" />
+            </div>
+          </div>
 
-    <label style="margin-top:10px;">
-      <input id="consent" type="checkbox" />
-      Συμφωνώ να παραχθεί αναφορά και να σταλεί email προς τον Δρ Χιώνη
-    </label>
+          <div class="row" style="margin-top:12px;">
+            <div>
+              <label>Τμήμα ή Σχολή</label>
+              <input id="school" type="text" placeholder="π.χ. Ψυχολογία" />
+            </div>
+            <div>
+              <label>Στόχος 4 εβδομάδων</label>
+              <input id="goal" type="text" placeholder="π.χ. 4 ώρες μελέτη ανά ημέρα με σταθερό ύπνο" />
+            </div>
+          </div>
 
-    <p class="muted">
-      Αυτό δεν είναι ιατρική διάγνωση.  
-      Αν υπάρχει άμεσος κίνδυνος ή έντονη κρίση, ζήτησε άμεση βοήθεια από επείγουσες υπηρεσίες.
-    </p>
-  </div>
+          <div style="margin-top:12px;">
+            <label>Σημειώσεις που θέλει να λάβει υπόψη ο Δρ Χιώνης</label>
+            <textarea id="notes" placeholder="π.χ. άγχος εξετάσεων, δυσκολία εκκίνησης, δουλειά παράλληλα, θέματα ύπνου"></textarea>
+          </div>
 
-  <div class="card">
-    <h2>Κλίμακα 1. Ρύθμιση Συναισθήματος για Μελέτη</h2>
-    <p class="muted">Κλίμακα 1 έως 5. 1 σημαίνει καθόλου. 5 σημαίνει πάρα πολύ.</p>
-    <div id="erItems"></div>
-  </div>
+          <div class="sep"></div>
 
-  <div class="card">
-    <h2>Κλίμακα 2. Κοινωνική Στήριξη και Ανήκειν</h2>
-    <p class="muted">Κλίμακα 1 έως 5. 1 σημαίνει καθόλου. 5 σημαίνει πάρα πολύ.</p>
-    <div id="ssItems"></div>
-  </div>
+          <div class="consent">
+            <input id="consent" type="checkbox" />
+            <div>
+              <div style="font-weight:700;">Συναίνεση</div>
+              <div class="small muted">
+                Ο ή η συμμετέχων δηλώνει ότι συμπληρώνει εθελοντικά.  
+                Ο ή η συμμετέχων κατανοεί ότι το αποτέλεσμα είναι για mentoring και ανάπτυξη δεξιοτήτων.  
+                Ο ή η συμμετέχων κατανοεί ότι δεν πρόκειται για κλινική διάγνωση.
+              </div>
+            </div>
+          </div>
 
-  <div class="card">
-    <h2>Κλίμακα 3. Ανθεκτικότητα και Επανεκκίνηση</h2>
-    <p class="muted">Κλίμακα 1 έως 5. 1 σημαίνει καθόλου. 5 σημαίνει πάρα πολύ.</p>
-    <div id="rrItems"></div>
-  </div>
+          <div class="btnbar">
+            <button class="btn" id="startBtn">Ξεκίνημα ερωτηματολογίου</button>
+            <button class="btn secondary" id="previewBtn">Προεπισκόπηση αποτελεσμάτων</button>
+          </div>
 
-  <div class="card">
-    <h2>Αποτελέσματα</h2>
-    <div class="results" id="resultsBox">Πάτα Προεπισκόπηση για να δεις σκορ.</div>
+          <p class="hint">
+            Με το κουμπί Ολοκλήρωση γίνεται λήψη αναφοράς Word.  
+            Έπειτα ανοίγει email προς dchionis10@gmail.com.  
+            Ο ή η συμμετέχων επισυνάπτει την αναφορά και την στέλνει.
+          </p>
+        </div>
 
-    <div class="actions">
-      <button id="previewBtn" type="button">Προεπισκόπηση σκορ</button>
-      <button id="submitBtn" type="button">Ολοκλήρωση και αναφορά</button>
+        <div class="card" style="margin-top:14px;">
+          <h2>Επιστημονική βάση και ερμηνευτικό πλαίσιο</h2>
+          <p class="lead">
+            Η ενότητα αυτή εξηγεί το πλαίσιο σε τρίτο πρόσωπο, ώστε ο ή η συμμετέχων να ξέρει τι κάνει και γιατί.  
+            Η ενότητα αυτή δείχνει ότι οι διαστάσεις βασίζονται σε τεκμηριωμένα πεδία της επιστήμης.
+          </p>
+
+          <div class="sep"></div>
+
+          <p class="lead">
+            Η παρούσα αξιολόγηση έχει στόχο να χαρτογραφήσει δεξιότητες αυτορρύθμισης και προσαρμοστικής λειτουργικότητας στη φοιτητική ζωή.  
+            Η αξιολόγηση δεν αποτελεί ψυχιατρική ή ψυχοπαθολογική διάγνωση.  
+            Η αξιολόγηση χρησιμοποιείται για mentoring και για στοχευμένη βελτιστοποίηση δεξιοτήτων.
+          </p>
+
+          <p class="lead">
+            Ο ή η συμμετέχων απαντά σε δηλώσεις που αφορούν μελέτη, συγκέντρωση, διαχείριση άγχους, ανοχή δυσφορίας, κοινωνική στήριξη, ζήτηση βοήθειας, και ανάκαμψη.  
+            Οι δηλώσεις δίνουν δείκτες που συνδέονται με την αυτορρυθμιζόμενη μάθηση και την αλλαγή συμπεριφοράς μέσω στόχων.  
+            Η ερμηνεία μετατρέπεται σε πρακτικά βήματα με SMART στόχους και μικροδεσμεύσεις.
+          </p>
+
+          <p class="lead">
+            Η λογική του προφίλ βασίζεται σε αντιστοίχιση μοτίβου.  
+            Η αντιστοίχιση γίνεται με cosine similarity ανάμεσα σε διάνυσμα δεξιοτήτων και σε target profiles.  
+            Ο ή η συμμετέχων λαμβάνει το κοντινότερο προφίλ, μαζί με προτάσεις παρέμβασης.
+          </p>
+
+          <details>
+            <summary>Βιβλιογραφική στήριξη και DOI</summary>
+            <div class="small muted" style="margin-top:10px; line-height:1.55;">
+              Zimmerman, B. J. (2002). Becoming a self-regulated learner: An overview. Theory Into Practice, 41(2), 64–70. https://doi.org/10.1207/s15430421tip4102_2<br/>
+              Steel, P. (2007). The nature of procrastination: A meta-analytic and theoretical review of quintessential self-regulatory failure. Psychological Bulletin, 133(1), 65–94. https://doi.org/10.1037/0033-2909.133.1.65<br/>
+              Gross, J. J., &amp; John, O. P. (2003). Individual differences in two emotion regulation processes: Implications for affect, relationships, and well-being. Journal of Personality and Social Psychology, 85(2), 348–362. https://doi.org/10.1037/0022-3514.85.2.348<br/>
+              Gollwitzer, P. M. (1999). Implementation intentions: Strong effects of simple plans. American Psychologist, 54(7), 493–503. https://doi.org/10.1037/0003-066X.54.7.493<br/>
+              Locke, E. A., &amp; Latham, G. P. (2002). Building a practically useful theory of goal setting and task motivation. American Psychologist, 57(9), 705–717. https://doi.org/10.1037//0003-066X.57.9.705<br/>
+              Miyake, A., Friedman, N. P., Emerson, M. J., Witzki, A. H., Howerter, A., &amp; Wager, T. D. (2000). The unity and diversity of executive functions. Cognitive Psychology, 41(1), 49–100. https://doi.org/10.1006/cogp.1999.0734<br/>
+              Simons, J. S., &amp; Gaher, R. M. (2005). The Distress Tolerance Scale. Motivation and Emotion, 29, 83–102. https://doi.org/10.1007/s11031-005-7955-3
+            </div>
+          </details>
+        </div>
+
+        <div class="card" id="qCard" style="margin-top:14px; display:none;">
+          <h2>Ερωτηματολόγιο</h2>
+
+          <div class="progressBox">
+            <div style="min-width:170px;">
+              <div style="font-weight:800;">Πρόοδος</div>
+              <div class="small muted" id="progressText">0 από 0</div>
+            </div>
+            <div class="progress" aria-hidden="true">
+              <div class="bar" id="progressBar"></div>
+            </div>
+          </div>
+
+          <div class="hint">
+            Κλίμακα απάντησης. 1 Διαφωνώ απόλυτα. 2 Διαφωνώ. 3 Ούτε συμφωνώ ούτε διαφωνώ. 4 Συμφωνώ. 5 Συμφωνώ απόλυτα.
+          </div>
+
+          <div id="sections"></div>
+
+          <div class="btnbar">
+            <button class="btn" id="calcBtn">Υπολογισμός προφίλ</button>
+            <button class="btn secondary" id="toTopBtn">Πάνω</button>
+          </div>
+        </div>
+
+        <div class="card" id="resultsCard" style="margin-top:14px; display:none;">
+          <h2>Αποτελέσματα και προφίλ</h2>
+          <div class="resultsGrid">
+            <div id="profileBox" class="radarWrap"></div>
+            <div class="radarWrap">
+              <h3>Διάγραμμα αράχνη</h3>
+              <canvas id="radar" width="900" height="520"></canvas>
+              <div class="small muted" id="radarNote" style="margin-top:8px;"></div>
+            </div>
+
+            <div class="radarWrap">
+              <h3>Ολοκλήρωση</h3>
+              <div class="small muted">
+                Κόστος αξιολόγησης. 200 ευρώ.  
+                Κόστος συνεδρίας follow up. 50 ευρώ ανά συνεδρία.
+              </div>
+              <div class="btnbar">
+                <button class="btn" id="finishBtn">Ολοκλήρωση</button>
+                <button class="btn secondary" id="downloadOnlyBtn">Λήψη αναφοράς Word</button>
+              </div>
+              <div class="hint">
+                Με την Ολοκλήρωση γίνεται λήψη αναφοράς και ανοίγει email προς dchionis10@gmail.com.  
+                Στο email ο ή η συμμετέχων επισυνάπτει το αρχείο και το στέλνει.
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div>
+        <div class="card">
+          <h2>Πώς βγαίνει το προφίλ</h2>
+          <p class="lead">
+            Οι απαντήσεις χαρτογραφούνται σε διαστάσεις δεξιοτήτων.  
+            Οι διαστάσεις γίνονται διάνυσμα.  
+            Το διάνυσμα συγκρίνεται με target profiles μέσω cosine similarity.
+          </p>
+          <div class="sep"></div>
+          <p class="lead">
+            Το αποτέλεσμα είναι προφίλ ανάπτυξης.  
+            Το αποτέλεσμα δείχνει προτεραιότητες.  
+            Το αποτέλεσμα οδηγεί σε SMART στόχους.
+          </p>
+          <details>
+            <summary>Τι σημαίνει cosine similarity</summary>
+            <div class="small muted" style="margin-top:10px; line-height:1.55;">
+              Η cosine similarity μετρά ομοιότητα μοτίβου.  
+              Δεν κοιτά μόνο ύψος, κοιτά και σχήμα.  
+              Έτσι ξεχωρίζει δύο άτομα που έχουν ίδιο μέσο επίπεδο, αλλά διαφορετική κατανομή δυνατών και αδύναμων σημείων.
+            </div>
+          </details>
+        </div>
+
+        <div class="card" style="margin-top:14px;">
+          <h2>Χρήση δεδομένων</h2>
+          <p class="lead">
+            Η συμπλήρωση είναι εθελοντική.  
+            Τα δεδομένα χρησιμοποιούνται για την αναφορά mentoring.  
+            Ο ή η συμμετέχων μπορεί να αποχωρήσει πριν την ολοκλήρωση.
+          </p>
+          <div class="sep"></div>
+          <p class="small muted">
+            Σημείωση. Αν υπάρχουν ενδείξεις σοβαρής επιβάρυνσης ή κινδύνου, προτείνεται άμεση κλινική εκτίμηση.
+          </p>
+        </div>
+      </div>
     </div>
-
-    <div id="status"></div>
-
-    <p class="muted small" style="display:none;">
-      Με το κουμπί Ολοκλήρωση κατεβαίνει αρχείο .doc.  
-      Μετά ανοίγει email προς dchionis10@gmail.com, και εσύ επισυνάπτεις το αρχείο.  
-      Αυτό γίνεται επειδή ο browser δεν μπορεί να στείλει συνημμένα μόνος του.
-    </p>
   </div>
 
 <script>
-  const DOCTOR_EMAIL = "dchionis10@gmail.com";
+  const EMAIL_TO = "dchionis10@gmail.com";
 
-  const scales = {
-    er: {
-      title: "Ρύθμιση Συναισθήματος για Μελέτη",
-      min: 1, max: 5,
+  const LIKERT = [
+    { v: 1, t: "1 Διαφωνώ απόλυτα" },
+    { v: 2, t: "2 Διαφωνώ" },
+    { v: 3, t: "3 Ούτε ούτε" },
+    { v: 4, t: "4 Συμφωνώ" },
+    { v: 5, t: "5 Συμφωνώ απόλυτα" }
+  ];
+
+  const DIMENSIONS = [
+    {
+      id: "init",
+      name: "Εκκίνηση και αυτορρύθμιση",
+      desc: "Ξεκίνημα μελέτης, συνέπεια, αναβολή, μικρά βήματα.",
       items: [
-        "Όταν πιέζομαι, μπορώ να ηρεμήσω αρκετά ώστε να ξεκινήσω μελέτη.",
-        "Μπορώ να αλλάξω την οπτική μου όταν ένα διάβασμα μου φαίνεται βουνό.",
-        "Όταν αγχώνομαι, κάνω κάτι μικρό που με επαναφέρει σε 10 λεπτά.",
-        "Μπορώ να συνεχίσω μελέτη ακόμη και αν δεν έχω διάθεση.",
-        "Όταν κάνω λάθος ή κολλήσω, δεν καταρρέω ψυχολογικά.",
-        "Μπορώ να μιλήσω στον εαυτό μου με ήρεμο τρόπο όταν αποτυγχάνω.",
-        "Μπορώ να βάλω όριο σε σκέψεις που με τραβάνε σε υπερανάλυση.",
-        "Μπορώ να ζητήσω βοήθεια αντί να κλειστώ όταν πιέζομαι."
+        "Ξεκινώ τη μελέτη μέσα σε λίγα λεπτά, όταν έχω πλάνο.",
+        "Αν κολλήσω, συνεχίζω με το επόμενο μικρό βήμα.",
+        "Αφήνω το κινητό εκτός οπτικού πεδίου, όταν διαβάζω.",
+        "Κλείνω παράθυρα και ειδοποιήσεις, πριν ξεκινήσω.",
+        "Αν χάσω μία μέρα, επιστρέφω χωρίς να το κάνω δράμα.",
+        "Σπάω μεγάλα tasks σε μικρές ενέργειες.",
+        "Συνήθως ξεκινώ πρώτα τα δύσκολα.",
+        "Δεν περιμένω να νιώσω έτοιμος ή έτοιμη για να ξεκινήσω.",
+        "Όταν έχω άγχος, παρόλα αυτά μπορώ να ξεκινήσω.",
+        "Τηρώ ένα βασικό πρόγραμμα, ακόμη και σε πίεση.",
+        "Αποφεύγω το scrolling πριν τη μελέτη.",
+        "Βάζω χρονόμετρο και το τιμώ.",
+        "Κάνω διάλειμμα χωρίς να χάνω τον έλεγχο χρόνου.",
+        "Επιστρέφω στη δουλειά μετά το διάλειμμα χωρίς μεγάλη μάχη.",
+        "Ορίζω τι σημαίνει ολοκλήρωση για κάθε εργασία.",
+        "Κάνω μικρή προθέρμανση 2 λεπτών και μπαίνω στο task.",
+        "Όταν βαριέμαι, συνεχίζω για άλλα 5 λεπτά.",
+        "Η αναβολή δεν μου τρώει το μεγαλύτερο κομμάτι της εβδομάδας.",
+        "Κάνω έλεγχο προόδου στο τέλος της ημέρας.",
+        "Αποφεύγω να ξεκινάω πολλά πράγματα μαζί."
       ]
     },
-    ss: {
-      title: "Κοινωνική Στήριξη και Ανήκειν",
-      min: 1, max: 5,
+    {
+      id: "goals",
+      name: "Στόχοι και μικροδεσμεύσεις",
+      desc: "Σαφήνεια στόχου, συγκεκριμενοποίηση, μέτρηση, συνέπεια.",
       items: [
-        "Υπάρχει τουλάχιστον ένα άτομο που μπορώ να μιλήσω χωρίς φόβο κριτικής.",
-        "Νιώθω ότι ανήκω σε μία μικρή ομάδα ανθρώπων που με στηρίζει.",
-        "Όταν δυσκολεύομαι, μπορώ να ζητήσω πρακτική βοήθεια και να την πάρω.",
-        "Όταν δυσκολεύομαι, μπορώ να ζητήσω συναισθηματική στήριξη και να την πάρω.",
-        "Έχω ένα άτομο που με ενθαρρύνει με συγκεκριμένο τρόπο για τη σχολή.",
-        "Δεν νιώθω μόνη όταν έχω πίεση από εξετάσεις.",
-        "Μπορώ να βάλω όρια σε σχέσεις που με εξαντλούν.",
-        "Μπορώ να μιλήσω για άγχος ή ντροπή χωρίς να νιώσω ότι εκτίθεμαι."
+        "Γράφω τι θέλω να πετύχω πριν αρχίσω να δουλεύω.",
+        "Μπορώ να πω σε μία πρόταση τον στόχο της εβδομάδας.",
+        "Μετατρέπω τον στόχο σε μικρές καθημερινές πράξεις.",
+        "Ξέρω πότε ένα task είναι αρκετά καλό για να κλείσει.",
+        "Έχω ξεκάθαρο ορισμό επιτυχίας για το διάβασμα.",
+        "Αν αλλάξει κάτι, προσαρμόζω στόχο χωρίς να τα παρατήσω.",
+        "Βάζω ρεαλιστικό φόρτο και όχι φανταστικό.",
+        "Χρησιμοποιώ checklists ή λίστα ενεργειών.",
+        "Κρατάω σημείο αναφοράς για το τι είναι προτεραιότητα.",
+        "Δεν μπερδεύω το άγχος με στόχο.",
+        "Όταν πέσω έξω, αναθεωρώ και συνεχίζω.",
+        "Ορίζω πότε θα ξεκινήσω και πού θα το κάνω.",
+        "Ορίζω πότε θα σταματήσω για να προστατέψω ύπνο.",
+        "Κάνω weekly review, έστω και μικρό.",
+        "Μετράω χρόνο εστίασης, όχι μόνο ώρες στο γραφείο.",
+        "Αν χάσω μία δέσμευση, δεν καταρρέω.",
+        "Επιβραβεύω την τήρηση διαδικασίας, όχι μόνο αποτέλεσμα.",
+        "Μπορώ να θέσω στόχο που με τραβά, όχι που με φοβίζει.",
+        "Έχω plan B όταν η μέρα στραβώσει.",
+        "Δεν γεμίζω τη μέρα με στόχους που δεν χωράνε."
       ]
     },
-    rr: {
-      title: "Ανθεκτικότητα και Επανεκκίνηση",
-      min: 1, max: 5,
+    {
+      id: "focus",
+      name: "Προσοχή και εκτελεστικός έλεγχος",
+      desc: "Διάσπαση, αναστολή παρόρμησης, επιμονή, επαναφορά.",
       items: [
-        "Μετά από μία κακή μέρα, μπορώ να ξαναμπώ στο πρόγραμμα την επόμενη.",
-        "Όταν χάνω ρυθμό, μπορώ να κάνω επανεκκίνηση με μικρό βήμα.",
-        "Μπορώ να κρατήσω μία ρουτίνα ύπνου που στηρίζει τη μελέτη.",
-        "Μπορώ να κάνω μικρές σταθερές προσπάθειες χωρίς υπερπροσπάθεια.",
-        "Αν αποτύχω σε στόχο, μπορώ να το δω σαν δεδομένο και όχι σαν ταυτότητα.",
-        "Μπορώ να προστατεύσω ενέργεια και συγκέντρωση από περισπασμούς.",
-        "Όταν κουράζομαι, αναγνωρίζω το όριο και κάνω σωστή ανάκαμψη.",
-        "Συνήθως βρίσκω τρόπο να συνεχίσω ακόμη και όταν υπάρχουν εμπόδια."
+        "Μένω σε ένα task χωρίς να πηδάω σε άλλα κάθε λίγο.",
+        "Όταν αποσπαστώ, επιστρέφω σχετικά γρήγορα.",
+        "Δεν αλλάζω εφαρμογή χωρίς λόγο, όταν δουλεύω.",
+        "Αν νιώσω παρόρμηση να ελέγξω κάτι, μπορώ να περιμένω.",
+        "Μπορώ να διαβάσω 25 λεπτά χωρίς διακοπή.",
+        "Μπορώ να κάνω 2 κύκλους εστίασης στη σειρά.",
+        "Συνήθως θυμάμαι τι έκανα πριν διακοπώ.",
+        "Δεν χάνω 10 λεπτά για να ξαναβρώ το νήμα.",
+        "Οργανώνω υλικά πριν ξεκινήσω, ώστε να μην ψάχνω.",
+        "Αποφεύγω να ανοίγω πολλά tabs μαζί.",
+        "Κλείνω ειδοποιήσεις, όταν χρειάζεται βαθιά δουλειά.",
+        "Μπορώ να κρατήσω μία σκέψη σε εκκρεμότητα χωρίς να τη λύσω τώρα.",
+        "Όταν νιώθω ανησυχία, δεν με τραβά από το task αμέσως.",
+        "Δεν τσιμπάω εύκολα από εξωτερικούς θορύβους.",
+        "Μπορώ να ακολουθήσω οδηγίες χωρίς να χάνω βήματα.",
+        "Ελέγχω παρορμήσεις φαγητού ή καφέ όταν διαβάζω.",
+        "Μπορώ να κάνω δύσκολο μέρος χωρίς να το αναβάλλω αυτόματα.",
+        "Στο διάβασμα μπορώ να ανεχτώ βαρετά κομμάτια.",
+        "Όταν κάνω λάθος, δεν χάνω όλη την ροή.",
+        "Μπορώ να ολοκληρώσω αυτό που άρχισα."
+      ]
+    },
+    {
+      id: "er",
+      name: "Ρύθμιση συναισθήματος",
+      desc: "Αναπλαισίωση, διαχείριση έντασης, σταθερότητα σε πίεση.",
+      items: [
+        "Μπορώ να δω μία δυσκολία σαν πρόβλημα προς λύση.",
+        "Μπορώ να αλλάξω οπτική όταν αγχώνομαι.",
+        "Όταν αποτύχω, δεν το κάνω ταυτότητα.",
+        "Δεν με παίρνει εύκολα η καταστροφολογία.",
+        "Μπορώ να ηρεμήσω με απλές τεχνικές αναπνοής.",
+        "Μπορώ να ηρεμήσω με κίνηση ή περπάτημα.",
+        "Δεν ξεσπάω εύκολα σε ανθρώπους γύρω μου.",
+        "Όταν θυμώσω, δεν κάνω παρορμητικές κινήσεις.",
+        "Μπορώ να μιλήσω στον εαυτό μου με πιο δίκαιο τρόπο.",
+        "Δεν χρησιμοποιώ το άγχος σαν καύσιμο μέχρι εξάντληση.",
+        "Όταν πιεστώ, κρατάω την αξιοπρέπεια μου.",
+        "Μπορώ να κάνω παύση πριν απαντήσω σε ένταση.",
+        "Μπορώ να αντέξω λίγο άγχος και να συνεχίσω.",
+        "Δεν χρειάζομαι τέλειες συνθήκες για να λειτουργήσω.",
+        "Μπορώ να ξεχωρίσω γεγονός από ερμηνεία.",
+        "Μπορώ να βάλω όρια στο εσωτερικό drama.",
+        "Όταν έχω φόβο, δεν με ακινητοποιεί εντελώς.",
+        "Μπορώ να μετατρέψω το άγχος σε σχέδιο.",
+        "Μπορώ να ρυθμίσω τον ρυθμό μου σε εξετάσεις.",
+        "Μπορώ να επανέλθω μετά από έντονο συναίσθημα."
+      ]
+    },
+    {
+      id: "dt",
+      name: "Ανοχή δυσφορίας και ευελιξία",
+      desc: "Αντοχή σε δυσάρεστο συναίσθημα, αποφυγή, αξίες, σταθερότητα.",
+      items: [
+        "Μπορώ να συνεχίσω σε task, ακόμη και αν δεν νιώθω καλά.",
+        "Δεν χρειάζεται να εξαφανιστεί η δυσφορία για να δράσω.",
+        "Όταν κάτι είναι άβολο, δεν το αποφεύγω πάντα.",
+        "Αν φοβηθώ, δεν ακυρώνω όλη τη μέρα μου.",
+        "Μπορώ να αντέξω την αβεβαιότητα για λίγο.",
+        "Μπορώ να αντέξω βαρεμάρα χωρίς να αποδράσω.",
+        "Μπορώ να αντέξω κριτική χωρίς να σπάσω.",
+        "Μπορώ να κάνω έκθεση σε δύσκολα κομμάτια ύλης.",
+        "Μπορώ να μείνω σε αξίες μου όταν πιέζομαι.",
+        "Δεν χρειάζεται να νιώθω αυτοπεποίθηση για να ξεκινήσω.",
+        "Μπορώ να αφήσω μία σκέψη να περάσει χωρίς να τη λύσω.",
+        "Δεν παγώνω εύκολα μπροστά σε απαιτήσεις.",
+        "Μπορώ να επιλέξω πράξη, αντί για παρόρμηση.",
+        "Δεν χρησιμοποιώ πάντα αποφυγή για να νιώσω καλύτερα.",
+        "Μπορώ να αποδεχτώ μικρές ατέλειες και να προχωρήσω.",
+        "Μπορώ να συνεχίσω παρά την εσωτερική γκρίνια.",
+        "Μπορώ να κάνω το πρώτο βήμα και ας μην είμαι έτοιμος ή έτοιμη.",
+        "Μπορώ να μείνω στο παρόν όταν αγχώνομαι.",
+        "Μπορώ να λειτουργήσω χωρίς να με ελέγχει η διάθεση.",
+        "Μπορώ να ξανασηκωθώ μετά από setback."
+      ]
+    },
+    {
+      id: "ss",
+      name: "Κοινωνική στήριξη και ανήκειν",
+      desc: "Αίσθηση στήριξης, σύνδεση, μοναξιά, εμπιστοσύνη.",
+      items: [
+        "Έχω τουλάχιστον ένα άτομο που με στηρίζει στα δύσκολα.",
+        "Νιώθω ότι αν ζητήσω βοήθεια, δεν θα με κρίνουν υπερβολικά.",
+        "Νιώθω ότι ανήκω σε κάποιο πλαίσιο.",
+        "Έχω ανθρώπους που με καταλαβαίνουν, έστω και λίγο.",
+        "Μπορώ να μιλήσω για άγχος χωρίς ντροπή.",
+        "Μπορώ να μοιραστώ αποτυχία χωρίς να γελοιοποιηθώ.",
+        "Έχω ένα άτομο που μπορώ να πάρω τηλέφωνο αν πιεστώ.",
+        "Δεν νιώθω μόνος ή μόνη στις εξετάσεις.",
+        "Έχω σχέση εμπιστοσύνης με κάποιον διδάσκοντα ή μέντορα.",
+        "Μπορώ να δεχτώ στήριξη χωρίς να νιώσω αδυναμία.",
+        "Κρατάω επαφή με φίλους, ακόμη και σε φόρτο.",
+        "Δεν απομονώνομαι εντελώς όταν δυσκολεύομαι.",
+        "Νιώθω ότι αξίζω στήριξη.",
+        "Οι γύρω μου δεν με κάνουν να νιώθω μικρός ή μικρή.",
+        "Έχω έναν κύκλο που σέβεται τα όρια μου.",
+        "Νιώθω ότι μπορώ να ζητήσω πρακτική βοήθεια, όχι μόνο ψυχολογική.",
+        "Μπορώ να πω όχι χωρίς να φοβάμαι απόρριψη.",
+        "Έχω εμπειρίες συνεργασίας που λειτουργούν.",
+        "Μπορώ να ζητήσω feedback χωρίς φόβο.",
+        "Νιώθω ότι υπάρχει ένα ασφαλές σημείο για μένα."
+      ]
+    },
+    {
+      id: "hs",
+      name: "Ζήτηση βοήθειας και στρατηγική μάθησης",
+      desc: "Πότε ζητά βοήθεια, πώς την ζητά, πώς χρησιμοποιεί feedback.",
+      items: [
+        "Ζητάω βοήθεια πριν γίνει κρίση.",
+        "Ξέρω σε ποιον να απευθυνθώ για κάθε είδος προβλήματος.",
+        "Μπορώ να κάνω μία σωστή ερώτηση για ύλη.",
+        "Μπορώ να ζητήσω διευκρίνιση χωρίς να νιώσω χαζός ή χαζή.",
+        "Μπορώ να ζητήσω επανάληψη ή παράδειγμα.",
+        "Κάνω ενεργητική ανάκληση, όχι μόνο διάβασμα με μάτια.",
+        "Κάνω μικρά τεστ στον εαυτό μου.",
+        "Χρησιμοποιώ σημειώσεις με τρόπο που με βοηθά.",
+        "Όταν δεν καταλαβαίνω, το πιάνω από την αρχή.",
+        "Μπορώ να αλλάξω στρατηγική όταν δεν δουλεύει.",
+        "Ζητάω feedback και το εφαρμόζω.",
+        "Δεν περιμένω την τελευταία εβδομάδα για να φανεί κενό.",
+        "Μπορώ να ορίσω τι δεν ξέρω και να το στοχεύσω.",
+        "Κάνω ανασκόπηση λαθών μετά από τεστ ή quiz.",
+        "Ξέρω να κάνω ένα απλό πλάνο εξεταστικής.",
+        "Ξέρω να δώσω χρόνο σε δύσκολα κεφάλαια.",
+        "Δεν ντρέπομαι να χρησιμοποιήσω tutoring ή mentoring.",
+        "Ξέρω να χρησιμοποιήσω βιβλιογραφία και πηγές.",
+        "Μπορώ να φτιάξω ρεαλιστικό πρόγραμμα επανάληψης.",
+        "Μπορώ να διατηρήσω τη στρατηγική μου όταν πιεστώ."
+      ]
+    },
+    {
+      id: "rec",
+      name: "Ανάκαμψη και ύπνος",
+      desc: "Ύπνος, αποφόρτιση, αποσύνδεση, ρουτίνα ανάκτησης.",
+      items: [
+        "Κρατάω σχετικά σταθερή ώρα ύπνου.",
+        "Κρατάω σχετικά σταθερή ώρα αφύπνισης.",
+        "Μπορώ να κοιμηθώ χωρίς πολύ scrolling πριν.",
+        "Δεν πίνω καφέ αργά που μου χαλά τον ύπνο.",
+        "Κάνω μικρή αποσύνδεση πριν κοιμηθώ.",
+        "Ο ύπνος μου συνήθως με ξεκουράζει.",
+        "Όταν χάνω ύπνο, το διορθώνω την επόμενη μέρα.",
+        "Κάνω διάλειμμα που με φορτίζει και δεν με αδειάζει.",
+        "Κάνω κίνηση ή άσκηση έστω και λίγο.",
+        "Έχω μικρές στιγμές χαλάρωσης μέσα στη μέρα.",
+        "Μπορώ να αποσυνδεθώ από σκέψεις για μελέτη.",
+        "Δεν με κυνηγά ενοχή όταν ξεκουράζομαι.",
+        "Κάνω πράγματα που μου δίνουν νόημα εκτός σχολής.",
+        "Δεν πάω συνεχόμενα στο κόκκινο.",
+        "Όταν πιεστώ, βρίσκω τρόπο να επανέλθω.",
+        "Μπορώ να κοιμηθώ χωρίς να σκέφτομαι συνέχεια ύλη.",
+        "Δεν έχω συχνά αϋπνία πριν από υποχρεώσεις.",
+        "Μπορώ να κάνω power nap χωρίς να χαλάσει η νύχτα.",
+        "Έχω μία ρουτίνα που προστατεύει την ενέργεια μου.",
+        "Μπορώ να επιστρέψω σε baseline μετά από δύσκολη εβδομάδα."
       ]
     }
-  };
+  ];
 
-  function escapeHtml(s) {
-    return String(s || "")
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#039;");
-  }
+  const TARGET_PROFILES = [
+    {
+      id: "P1",
+      name: "Σταθερή Βάση",
+      tagline: "Χτίσιμο ρουτίνας και ελάχιστων κανόνων.",
+      vector: [0.55,0.52,0.50,0.52,0.50,0.55,0.52,0.58],
+      focus: [
+        "Σταθεροποίηση ύπνου και ενέργειας.",
+        "Μικροδεσμεύσεις 10 λεπτών ημερησίως.",
+        "Μείωση αναβολής με έναρξη σε 2 λεπτά."
+      ]
+    },
+    {
+      id: "P2",
+      name: "Ακαδημαϊκή Επιτάχυνση",
+      tagline: "Εστίαση, στρατηγική μάθησης, συνέπεια.",
+      vector: [0.70,0.72,0.74,0.58,0.55,0.60,0.74,0.62],
+      focus: [
+        "Βαθιά δουλειά και ρυθμός εξεταστικής.",
+        "Active recall και error review.",
+        "Σταθερά weekly reviews και KPI."
+      ]
+    },
+    {
+      id: "P3",
+      name: "Υπερφόρτωση και Ρύθμιση",
+      tagline: "Πρώτα ρύθμιση και ανοχή δυσφορίας.",
+      vector: [0.55,0.55,0.55,0.38,0.38,0.50,0.52,0.55],
+      focus: [
+        "Μείωση καταστροφολογίας με αναπλαισίωση.",
+        "Εκπαίδευση σε παύση πριν από αντίδραση.",
+        "Ανοχή δυσφορίας με μικρές εκθέσεις."
+      ]
+    },
+    {
+      id: "P4",
+      name: "Μοναχικός Μαχητής",
+      tagline: "Ενίσχυση στήριξης και βοήθειας.",
+      vector: [0.58,0.58,0.60,0.55,0.55,0.30,0.35,0.55],
+      focus: [
+        "Χτίσιμο δικτύου στήριξης.",
+        "Scripts για ζήτηση βοήθειας.",
+        "Σταθερή επαφή και feedback loop."
+      ]
+    },
+    {
+      id: "P5",
+      name: "Ικανός αλλά Ανοργάνωτος",
+      tagline: "Στόχοι και εκκίνηση, όχι περισσότερη πίεση.",
+      vector: [0.35,0.38,0.55,0.55,0.55,0.55,0.58,0.55],
+      focus: [
+        "Έναρξη με 2 λεπτά και κλείσιμο με 2 λεπτά.",
+        "Στόχοι τύπου if then.",
+        "Απλοποίηση προτεραιοτήτων."
+      ]
+    },
+    {
+      id: "P6",
+      name: "Υψηλή Απόδοση με Χαμηλή Ανάκαμψη",
+      tagline: "Προστασία ύπνου και αποφόρτιση για να κρατήσει.",
+      vector: [0.70,0.72,0.70,0.62,0.58,0.55,0.70,0.35],
+      focus: [
+        "Ρουτίνα ύπνου και αποσύνδεση.",
+        "Όρια φόρτου και διαλείμματα.",
+        "Ανάκτηση ενέργειας χωρίς ενοχή."
+      ]
+    }
+  ];
 
-  function renderScale(containerId, key) {
-    const sc = scales[key];
-    const root = document.getElementById(containerId);
-    root.innerHTML = "";
+  function $(id){ return document.getElementById(id); }
 
-    sc.items.forEach((txt, idx) => {
-      const itemNo = idx + 1;
-      const wrap = document.createElement("div");
-      wrap.className = "item";
+  const qCard = $("qCard");
+  const resultsCard = $("resultsCard");
+  const sectionsEl = $("sections");
+  const progressText = $("progressText");
+  const progressBar = $("progressBar");
+  const profileBox = $("profileBox");
+  const radar = $("radar");
+  const radarNote = $("radarNote");
+
+  const startBtn = $("startBtn");
+  const previewBtn = $("previewBtn");
+  const calcBtn = $("calcBtn");
+  const toTopBtn = $("toTopBtn");
+  const finishBtn = $("finishBtn");
+  const downloadOnlyBtn = $("downloadOnlyBtn");
+
+  let totalItems = 0;
+
+  function buildQuestionnaire(){
+    sectionsEl.innerHTML = "";
+    totalItems = 0;
+
+    DIMENSIONS.forEach((d, di) => {
+      const sec = document.createElement("div");
+      sec.className = "qSection";
+      sec.dataset.dim = d.id;
 
       const title = document.createElement("div");
-      title.innerHTML = "<strong>" + itemNo + ".</strong> " + escapeHtml(txt);
+      title.className = "qTitle";
 
-      const scale = document.createElement("div");
-      scale.className = "scale";
+      const left = document.createElement("div");
+      const s = document.createElement("strong");
+      s.textContent = d.name;
+      const sp = document.createElement("span");
+      sp.textContent = d.desc;
+      left.appendChild(s);
+      left.appendChild(sp);
 
-      for (let v = sc.min; v <= sc.max; v++) {
-        const lab = document.createElement("label");
-        lab.innerHTML = '<input type="radio" name="' + key + "_" + itemNo + '" value="' + v + '" /> <span>' + v + "</span>";
-        scale.appendChild(lab);
-      }
+      const right = document.createElement("div");
+      right.className = "small muted";
+      right.textContent = d.items.length + " items";
 
-      wrap.appendChild(title);
-      wrap.appendChild(scale);
-      root.appendChild(wrap);
+      title.appendChild(left);
+      title.appendChild(right);
+      sec.appendChild(title);
+
+      d.items.forEach((it, ix) => {
+        const q = document.createElement("div");
+        q.className = "qItem";
+        const p = document.createElement("p");
+        p.className = "text";
+        p.textContent = (totalItems + 1) + ". " + it;
+        q.appendChild(p);
+
+        const scale = document.createElement("div");
+        scale.className = "scale";
+
+        LIKERT.forEach(opt => {
+          const lb = document.createElement("label");
+          lb.className = "opt";
+          const inp = document.createElement("input");
+          inp.type = "radio";
+          inp.name = `q_${d.id}_${ix}`;
+          inp.value = String(opt.v);
+          inp.addEventListener("change", updateProgress);
+          lb.appendChild(inp);
+
+          const t = document.createElement("span");
+          t.textContent = opt.v;
+          lb.appendChild(t);
+          scale.appendChild(lb);
+        });
+
+        q.appendChild(scale);
+        sec.appendChild(q);
+        totalItems += 1;
+      });
+
+      sectionsEl.appendChild(sec);
     });
+
+    updateProgress();
   }
 
-  function readAnswers(key) {
-    const sc = scales[key];
-    const answers = [];
-    for (let i = 1; i <= sc.items.length; i++) {
-      const sel = document.querySelector('input[name="' + key + "_" + i + '"]:checked');
-      if (!sel) return null;
-      answers.push(Number(sel.value));
-    }
-    return answers;
+  function updateProgress(){
+    const answered = document.querySelectorAll('input[type="radio"]:checked').length;
+    progressText.textContent = answered + " από " + totalItems;
+    const pct = totalItems ? Math.round((answered / totalItems) * 100) : 0;
+    progressBar.style.width = pct + "%";
   }
 
-  function mean(arr) {
-    return arr.reduce((a,b) => a + b, 0) / arr.length;
+  function requireConsent(){
+    const c = $("consent").checked;
+    if(!c){
+      alert("Χρειάζεται συναίνεση για να συνεχίσει ο ή η συμμετέχων.");
+      return false;
+    }
+    return true;
   }
 
-  function band(score) {
-    if (score < 2.6) return { label: "Χαμηλό", cls: "warn" };
-    if (score < 3.6) return { label: "Μέτριο", cls: "" };
-    return { label: "Υψηλό", cls: "ok" };
+  function ensureComplete(){
+    const answered = document.querySelectorAll('input[type="radio"]:checked').length;
+    if(answered < totalItems){
+      alert("Δεν έχουν απαντηθεί όλα τα items. Παρακαλώ ολοκλήρωση πριν τον υπολογισμό.");
+      return false;
+    }
+    return true;
   }
 
-  function practicalMeaning(scaleKey, score) {
-    const b = band(score).label;
-
-    if (scaleKey === "er") {
-      if (b === "Χαμηλό") return [
-        "Υπάρχει αυξημένη πιθανότητα μπλοκαρίσματος στην έναρξη μελέτης όταν υπάρχει άγχος.",
-        "Υπάρχει αυξημένη πιθανότητα αποφυγής ή υπερανάλυσης όταν ένα task φαίνεται δύσκολο."
-      ];
-      if (b === "Μέτριο") return [
-        "Υπάρχει λειτουργία αλλά σε ημέρες πίεσης πέφτει η συνέπεια.",
-        "Βοηθά ένα μικρό πρωτόκολλο επανεκκίνησης πριν από κάθε μπλοκ μελέτης."
-      ];
-      return [
-        "Υπάρχει καλή ρύθμιση και η απόδοση εξαρτάται πιο πολύ από σύστημα και ρουτίνα.",
-        "Βοηθά βελτιστοποίηση κανόνων περιβάλλοντος και σαφών μικρών στόχων."
-      ];
-    }
-
-    if (scaleKey === "ss") {
-      if (b === "Χαμηλό") return [
-        "Υπάρχει κίνδυνος να σηκώνει όλο το φορτίο μόνη της και να φθείρεται σιωπηλά.",
-        "Βοηθά να στηθούν δύο σταθερές επαφές και σαφή όρια σε εξαντλητικές σχέσεις."
-      ];
-      if (b === "Μέτριο") return [
-        "Υπάρχει στήριξη αλλά δεν ενεργοποιείται έγκαιρα όταν ανεβαίνει η πίεση.",
-        "Βοηθά πλάνο επικοινωνίας με μικρά αιτήματα και σαφή χρονισμό."
-      ];
-      return [
-        "Υπάρχει λειτουργική στήριξη και μειώνεται το ρίσκο απομόνωσης σε εξεταστικές περιόδους.",
-        "Βοηθά να γίνει η στήριξη πιο πρακτική με ρόλους και συμφωνίες."
-      ];
-    }
-
-    if (scaleKey === "rr") {
-      if (b === "Χαμηλό") return [
-        "Υπάρχει αυξημένη πιθανότητα να χαλάει ο ρυθμός μετά από setback και να αργεί η επανεκκίνηση.",
-        "Βοηθά σταθεροποίηση ύπνου και μικρά βήματα επανόδου με χαμηλή τριβή."
-      ];
-      if (b === "Μέτριο") return [
-        "Υπάρχει επανεκκίνηση αλλά δεν είναι σταθερή όταν συσσωρεύεται κόπωση.",
-        "Βοηθά διαχείριση ενέργειας και κανόνες για περισπασμούς."
-      ];
-      return [
-        "Υπάρχει καλή επανεκκίνηση και η πρόοδος εξαρτάται από monitoring και στόχους.",
-        "Βοηθά εβδομαδιαίο review με δείκτες και SMART στόχους."
-      ];
-    }
-
-    return ["", ""];
-  }
-
-  function followUpPlan(erScore, ssScore, rrScore) {
-    const labels = [band(erScore).label, band(ssScore).label, band(rrScore).label];
-    const lows = labels.filter(x => x === "Χαμηλό").length;
-    const mids = labels.filter(x => x === "Μέτριο").length;
-
-    if (lows >= 2) {
-      return {
-        sessions: 8,
-        frequency: "1 φορά την εβδομάδα",
-        goals: [
-          "SMART 1. 4 ημέρες μελέτη την εβδομάδα, 4 μπλοκ των 25 λεπτών ανά ημέρα, για 4 εβδομάδες.",
-          "SMART 2. Σταθερό ωράριο ύπνου, απόκλιση έως 45 λεπτά, για 14 ημέρες.",
-          "SMART 3. 2 στοχευμένες επαφές στήριξης την εβδομάδα με σαφές αίτημα."
-        ]
-      };
-    }
-
-    if (lows === 1 || mids >= 2) {
-      return {
-        sessions: 6,
-        frequency: "1 φορά την εβδομάδα",
-        goals: [
-          "SMART 1. 3 ημέρες μελέτη την εβδομάδα, 4 μπλοκ των 25 λεπτών, για 3 εβδομάδες.",
-          "SMART 2. Τελετουργικό έναρξης 2 λεπτών πριν από κάθε μπλοκ, για 14 ημέρες.",
-          "SMART 3. Πλάνο ανάκαμψης 20 λεπτών, σε 4 βράδια την εβδομάδα, για 3 εβδομάδες."
-        ]
-      };
-    }
-
+  function getMeta(){
     return {
-      sessions: 4,
-      frequency: "1 φορά ανά 2 εβδομάδες",
-      goals: [
-        "SMART 1. Εβδομαδιαίο review 15 λεπτών με 3 δείκτες, για 8 εβδομάδες.",
-        "SMART 2. Κανόνας κινητού σε ώρες μελέτης, με ένα διάλειμμα ανά 25λεπτο, για 14 ημέρες.",
-        "SMART 3. Στόχος σταθερότητας και όχι έντασης, με μικρές βελτιώσεις, για 4 εβδομάδες."
-      ]
+      name: $("name").value.trim(),
+      email: $("email").value.trim(),
+      school: $("school").value.trim(),
+      goal: $("goal").value.trim(),
+      notes: $("notes").value.trim(),
+      date: new Date().toLocaleString("el-GR")
     };
   }
 
-  function buildPreviewHtml(erM, ssM, rrM, overall) {
-    const erB = band(erM);
-    const ssB = band(ssM);
-    const rrB = band(rrM);
-    const ovB = band(overall);
+  function computeDimensionScores(){
+    const scores = [];
+    const raw = [];
 
-    let html = "";
-    html += "<div><strong>Σύνολο</strong></div>";
-    html += "<div>Γενικό σκορ " + overall.toFixed(2) + ". <span class='" + ovB.cls + "'>" + ovB.label + "</span></div>";
-    html += "<div class='hr'></div>";
-    html += "<div><strong>Ανά κλίμακα</strong></div>";
-    html += "<div>Ρύθμιση συναισθήματος " + erM.toFixed(2) + ". <span class='" + erB.cls + "'>" + erB.label + "</span></div>";
-    html += "<div>Κοινωνική στήριξη " + ssM.toFixed(2) + ". <span class='" + ssB.cls + "'>" + ssB.label + "</span></div>";
-    html += "<div>Ανθεκτικότητα " + rrM.toFixed(2) + ". <span class='" + rrB.cls + "'>" + rrB.label + "</span></div>";
-    html += "<div class='hr'></div>";
-    html += "<div class='muted'>Το αποτέλεσμα είναι screening και όχι διάγνωση.</div>";
+    DIMENSIONS.forEach(d => {
+      let sum = 0;
+      let count = 0;
+
+      d.items.forEach((_, ix) => {
+        const sel = document.querySelector(`input[name="q_${d.id}_${ix}"]:checked`);
+        const v = sel ? parseInt(sel.value, 10) : 0;
+        sum += v;
+        count += 1;
+      });
+
+      const max = count * 5;
+      const val = max ? (sum / max) : 0;
+      scores.push(val);
+      raw.push(sum);
+    });
+
+    return { scores, raw };
+  }
+
+  function l2norm(vec){
+    let s = 0;
+    for(const x of vec){ s += x * x; }
+    return Math.sqrt(s);
+  }
+
+  function cosineSimilarity(a, b){
+    let dot = 0;
+    for(let i=0;i<a.length;i++){ dot += a[i]*b[i]; }
+    const na = l2norm(a);
+    const nb = l2norm(b);
+    if(na === 0 || nb === 0) return 0;
+    return dot / (na * nb);
+  }
+
+  function pickProfile(vec){
+    const results = TARGET_PROFILES.map(p => {
+      return {
+        id: p.id,
+        name: p.name,
+        tagline: p.tagline,
+        focus: p.focus,
+        score: cosineSimilarity(vec, p.vector)
+      };
+    }).sort((a,b) => b.score - a.score);
+
+    return results;
+  }
+
+  function band01(x){
+    if(x >= 0.75) return { t:"Ισχυρό", c:"var(--good)" };
+    if(x >= 0.55) return { t:"Λειτουργικό", c:"var(--warn)" };
+    return { t:"Ευάλωτο", c:"var(--bad)" };
+  }
+
+  function practicalMeaning(dimId, score01){
+    const b = band01(score01).t;
+    const out = [];
+    if(dimId === "init"){
+      if(b === "Ισχυρό"){
+        out.push("Η εκκίνηση της μελέτης γίνεται χωρίς μεγάλη μάχη.");
+        out.push("Η αναβολή δεν τρώει τον κύριο χρόνο της εβδομάδας.");
+      } else if(b === "Λειτουργικό"){
+        out.push("Η εκκίνηση γίνεται, αλλά χρειάζεται καθαρότερος κανόνας έναρξης.");
+        out.push("Σε πίεση εμφανίζεται τάση αναβολής, που θέλει μικρορύθμιση.");
+      } else {
+        out.push("Η εκκίνηση συχνά καθυστερεί και ο χρόνος χάνεται πριν αρχίσει η δουλειά.");
+        out.push("Χρειάζεται μικρό πρωτόκολλο έναρξης ώστε να μειωθεί το κόστος εισόδου.");
+      }
+    }
+    if(dimId === "goals"){
+      if(b === "Ισχυρό"){
+        out.push("Υπάρχουν καθαροί στόχοι και μετατρέπονται σε πράξη.");
+        out.push("Υπάρχει σταθερή προτεραιοποίηση και έλεγχος προόδου.");
+      } else if(b === "Λειτουργικό"){
+        out.push("Οι στόχοι υπάρχουν, αλλά μερικές φορές γίνονται πολλοί ή ασαφείς.");
+        out.push("Χρειάζεται πιο καθαρό κλείσιμο και εβδομαδιαίο review.");
+      } else {
+        out.push("Η μέρα γεμίζει χωρίς καθαρό στόχο, οπότε η προσπάθεια χάνεται.");
+        out.push("Χρειάζεται στόχος 1 πρόταση και 2 μικροδεσμεύσεις ανά ημέρα.");
+      }
+    }
+    if(dimId === "focus"){
+      if(b === "Ισχυρό"){
+        out.push("Η προσοχή κρατιέται και η επιστροφή μετά από διάσπαση είναι γρήγορη.");
+        out.push("Ο εκτελεστικός έλεγχος επιτρέπει να ολοκληρώνονται tasks.");
+      } else if(b === "Λειτουργικό"){
+        out.push("Η προσοχή δουλεύει, αλλά το περιβάλλον μπορεί να την σπάει.");
+        out.push("Χρειάζονται κανόνες για ειδοποιήσεις και μικρά blocks εστίασης.");
+      } else {
+        out.push("Η διάσπαση προσοχής ρίχνει την απόδοση και αυξάνει κόπωση.");
+        out.push("Χρειάζονται σαφή όρια οθόνης και δομή 25 λεπτών.");
+      }
+    }
+    if(dimId === "er"){
+      if(b === "Ισχυρό"){
+        out.push("Η συναισθηματική ένταση μετατρέπεται σε σχέδιο και πράξη.");
+        out.push("Η αναπλαισίωση βοηθά να μειώνεται η καταστροφολογία.");
+      } else if(b === "Λειτουργικό"){
+        out.push("Η ρύθμιση υπάρχει, αλλά σε αιχμές φαίνεται υπερένταση.");
+        out.push("Χρειάζεται παύση και αναπνοή πριν από αποφάσεις.");
+      } else {
+        out.push("Το συναίσθημα συχνά οδηγεί το τι γίνεται, αντί να το οδηγεί ο στόχος.");
+        out.push("Χρειάζεται εκπαίδευση σε αναπλαισίωση και ψύχραιμη παύση.");
+      }
+    }
+    if(dimId === "dt"){
+      if(b === "Ισχυρό"){
+        out.push("Η δυσφορία δεν σταματά την πράξη και η συνέπεια κρατά.");
+        out.push("Η ευελιξία επιτρέπει να μένουν οι αξίες μπροστά.");
+      } else if(b === "Λειτουργικό"){
+        out.push("Υπάρχει αντοχή, αλλά σε μερικές καταστάσεις μπαίνει αποφυγή.");
+        out.push("Χρειάζονται μικρές εκθέσεις σε δύσκολα κομμάτια.");
+      } else {
+        out.push("Η δυσφορία οδηγεί σε αποφυγή και χάνεται ο ρυθμός.");
+        out.push("Χρειάζεται πρωτόκολλο ανοχής δυσφορίας σε μικρά βήματα.");
+      }
+    }
+    if(dimId === "ss"){
+      if(b === "Ισχυρό"){
+        out.push("Υπάρχει αίσθηση στήριξης, που ρίχνει τον φόρτο.");
+        out.push("Η σύνδεση λειτουργεί σαν προστατευτικός παράγοντας.");
+      } else if(b === "Λειτουργικό"){
+        out.push("Υπάρχει στήριξη, αλλά δεν ενεργοποιείται πάντα όταν χρειάζεται.");
+        out.push("Χρειάζεται μικρή στρατηγική επικοινωνίας και επαφής.");
+      } else {
+        out.push("Η μοναξιά ή η ανασφάλεια αυξάνουν την επιβάρυνση.");
+        out.push("Χρειάζεται χτίσιμο στήριξης και ασφαλών καναλιών βοήθειας.");
+      }
+    }
+    if(dimId === "hs"){
+      if(b === "Ισχυρό"){
+        out.push("Η ζήτηση βοήθειας γίνεται έγκαιρα και με σωστό τρόπο.");
+        out.push("Οι στρατηγικές μάθησης είναι ενεργητικές και με feedback.");
+      } else if(b === "Λειτουργικό"){
+        out.push("Υπάρχουν στρατηγικές, αλλά δεν εφαρμόζονται σταθερά σε πίεση.");
+        out.push("Χρειάζεται πιο συστηματικό active recall και error review.");
+      } else {
+        out.push("Η βοήθεια ζητείται αργά ή καθόλου και τα κενά μεγαλώνουν.");
+        out.push("Χρειάζεται script βοήθειας και εβδομαδιαίο πλάνο μάθησης.");
+      }
+    }
+    if(dimId === "rec"){
+      if(b === "Ισχυρό"){
+        out.push("Η ανάκαμψη και ο ύπνος στηρίζουν την απόδοση και την αντοχή.");
+        out.push("Η αποφόρτιση επιτρέπει σταθερό ρυθμό χωρίς εξάντληση.");
+      } else if(b === "Λειτουργικό"){
+        out.push("Η ανάκαμψη είναι μέτρια και σε εξεταστική πέφτει.");
+        out.push("Χρειάζεται προστασία ύπνου και μικρή αποσύνδεση πριν τη νύχτα.");
+      } else {
+        out.push("Ο ύπνος ή η αποφόρτιση είναι ασταθή και η κόπωση αυξάνει.");
+        out.push("Χρειάζεται πρωτόκολλο ύπνου και όρια οθόνης για σταθερότητα.");
+      }
+    }
+    return out.slice(0,2);
+  }
+
+  function makeSmartGoals(lowDims){
+    const goals = [];
+    const now = new Date();
+    const end = new Date(now.getTime() + 28*24*60*60*1000);
+    const endStr = end.toLocaleDateString("el-GR");
+
+    const map = {
+      init: [
+        `Μέχρι ${endStr} ο ή η συμμετέχων ξεκινά μελέτη σε 2 λεπτά, σε 5 από τις 7 ημέρες.`,
+        `Μέχρι ${endStr} ο ή η συμμετέχων κλείνει κινητό εκτός οπτικού πεδίου σε κάθε block 25 λεπτών.`
+      ],
+      goals: [
+        `Μέχρι ${endStr} ο ή η συμμετέχων γράφει στόχο ημέρας σε 1 πρόταση, σε 5 από τις 7 ημέρες.`,
+        `Μέχρι ${endStr} ο ή η συμμετέχων κάνει weekly review 10 λεπτών κάθε Κυριακή.`
+      ],
+      focus: [
+        `Μέχρι ${endStr} ο ή η συμμετέχων κάνει 2 blocks εστίασης των 25 λεπτών, σε 5 ημέρες την εβδομάδα.`,
+        `Μέχρι ${endStr} ο ή η συμμετέχων εφαρμόζει κανόνα ειδοποιήσεων off στο διάβασμα, σε 90% των blocks.`
+      ],
+      er: [
+        `Μέχρι ${endStr} ο ή η συμμετέχων κάνει μία αναπλαισίωση σε κρίσιμη σκέψη, σε 4 επεισόδια την εβδομάδα.`,
+        `Μέχρι ${endStr} ο ή η συμμετέχων εφαρμόζει παύση 10 δευτερολέπτων πριν από αντίδραση, σε 5 περιπτώσεις.`
+      ],
+      dt: [
+        `Μέχρι ${endStr} ο ή η συμμετέχων κάνει μικρή έκθεση 10 λεπτών σε δύσκολη ύλη, σε 4 ημέρες την εβδομάδα.`,
+        `Μέχρι ${endStr} ο ή η συμμετέχων παραμένει σε task για 5 λεπτά ακόμη όταν νιώθει δυσφορία, σε 5 περιπτώσεις.`
+      ],
+      ss: [
+        `Μέχρι ${endStr} ο ή η συμμετέχων κάνει μία επαφή στήριξης ανά εβδομάδα, με σαφή αίτημα.`,
+        `Μέχρι ${endStr} ο ή η συμμετέχων οργανώνει 1 συνεργατική μελέτη ή feedback session ανά εβδομάδα.`
+      ],
+      hs: [
+        `Μέχρι ${endStr} ο ή η συμμετέχων ζητά βοήθεια πριν γίνει κρίση, σε 2 μαθήματα.`,
+        `Μέχρι ${endStr} ο ή η συμμετέχων εφαρμόζει active recall 15 λεπτών, σε 4 ημέρες την εβδομάδα.`
+      ],
+      rec: [
+        `Μέχρι ${endStr} ο ή η συμμετέχων κρατά σταθερή ώρα ύπνου, σε 5 από τις 7 ημέρες.`,
+        `Μέχρι ${endStr} ο ή η συμμετέχων σταματά οθόνη 30 λεπτά πριν τον ύπνο, σε 4 ημέρες την εβδομάδα.`
+      ]
+    };
+
+    lowDims.forEach(id => {
+      const arr = map[id] || [];
+      arr.forEach(x => goals.push("• " + x));
+    });
+
+    while(goals.length < 6){
+      goals.push("• Μέχρι " + endStr + " ο ή η συμμετέχων εφαρμόζει 1 μικρό βήμα την ημέρα, ώστε να χτιστεί συνέπεια.");
+    }
+
+    return goals.slice(0,8);
+  }
+
+  function suggestSessions(scores){
+    const dims = DIMENSIONS.map((d,i)=>({id:d.id, name:d.name, v:scores[i]}))
+      .sort((a,b)=>a.v-b.v);
+
+    const low = dims.filter(x => x.v < 0.55).map(x => x.id);
+    const veryLow = dims.filter(x => x.v < 0.45).map(x => x.id);
+
+    let sessions = 0;
+    if(veryLow.length >= 3) sessions = 8;
+    else if(veryLow.length === 2) sessions = 6;
+    else if(veryLow.length === 1) sessions = 4;
+    else if(low.length >= 3) sessions = 4;
+    else if(low.length >= 1) sessions = 3;
+    else sessions = 2;
+
+    const frequency = sessions >= 6 ? "1 συνεδρία ανά εβδομάδα για 6 εβδομάδες" :
+                     sessions >= 4 ? "1 συνεδρία ανά εβδομάδα για 4 εβδομάδες" :
+                     "1 συνεδρία ανά 2 εβδομάδες για 4 εβδομάδες";
+
+    const lowDims = (veryLow.length ? veryLow : low).slice(0,4);
+    const smartGoals = makeSmartGoals(lowDims);
+
+    return { sessions, frequency, lowDims, smartGoals, dimsSorted: dims };
+  }
+
+  function renderResults(meta, scores01, profileRanked){
+    const best = profileRanked[0];
+    const second = profileRanked[1];
+
+    const plan = suggestSessions(scores01);
+
+    const badges = DIMENSIONS.map((d,i)=>{
+      const b = band01(scores01[i]);
+      const pct = Math.round(scores01[i]*100);
+      return `<span class="badge"><b style="color:${b.c};">${d.name}</b> ${pct}% ${b.t}</span>`;
+    }).join("");
+
+    const cost = plan.sessions * 50;
+    const costText = plan.sessions ? `${plan.sessions} συνεδρίες x 50 ευρώ. Σύνολο ${cost} ευρώ.` : "Δεν προτείνεται follow up.";
+
+    profileBox.innerHTML = `
+      <div style="display:flex; gap:10px; justify-content:space-between; flex-wrap:wrap;">
+        <div>
+          <div style="font-weight:900; font-size:16px;">Κοντινότερο προφίλ</div>
+          <div style="font-size:14px; margin-top:6px;"><b>${best.name}</b></div>
+          <div class="small muted" style="margin-top:4px;">${best.tagline}</div>
+        </div>
+        <div class="small muted">
+          Ομοιότητα μοτίβου. ${(best.score*100).toFixed(1)}%.
+          <br/>
+          Δεύτερο προφίλ. ${second ? second.name : "-"}.
+        </div>
+      </div>
+
+      <div class="sep"></div>
+
+      <div style="font-weight:800;">Διαστάσεις και επίπεδο</div>
+      <div style="margin-top:8px;">${badges}</div>
+
+      <div class="sep"></div>
+
+      <div class="kpi">
+        <div class="box">
+          <b>Σύνοψη</b>
+          <span>Το προφίλ δείχνει πού χρειάζεται ενίσχυση, ώστε να ανέβει η φοιτητική λειτουργικότητα.</span>
+        </div>
+        <div class="box">
+          <b>Προτεραιότητες</b>
+          <span>${plan.lowDims.length ? plan.lowDims.map(id => DIMENSIONS.find(d=>d.id===id).name).join(", ") : "Καμία χαμηλή προτεραιότητα."}</span>
+        </div>
+        <div class="box">
+          <b>Follow up</b>
+          <span>${plan.sessions} συνεδρίες. ${plan.frequency}.</span>
+        </div>
+        <div class="box">
+          <b>Κόστος</b>
+          <span>${costText}</span>
+        </div>
+      </div>
+
+      <div class="sep"></div>
+
+      <div style="font-weight:800;">Στόχοι SMART</div>
+      <div class="small muted" style="margin-top:8px; line-height:1.5;">${plan.smartGoals.join("<br/>")}</div>
+
+      <div class="sep"></div>
+
+      <div style="font-weight:800;">Εστίαση ανάπτυξης για το προφίλ</div>
+      <div class="small muted" style="margin-top:8px; line-height:1.5;">
+        • ${best.focus[0]}<br/>
+        • ${best.focus[1]}<br/>
+        • ${best.focus[2]}
+      </div>
+    `;
+
+    drawRadar(scores01);
+    radarNote.textContent = "Το διάγραμμα δείχνει ποσοστά ανά διάσταση. Χρησιμοποιείται για οπτική σύγκριση και στόχευση.";
+
+    return { best, plan };
+  }
+
+  function drawRadar(scores01){
+    const ctx = radar.getContext("2d");
+    const W = radar.width;
+    const H = radar.height;
+    ctx.clearRect(0,0,W,H);
+
+    const cx = W/2;
+    const cy = H/2 + 10;
+    const n = DIMENSIONS.length;
+    const R = Math.min(W,H) * 0.34;
+
+    function polar(i, r){
+      const ang = (-Math.PI/2) + (i*(2*Math.PI/n));
+      return { x: cx + r*Math.cos(ang), y: cy + r*Math.sin(ang) };
+    }
+
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = "rgba(255,255,255,.14)";
+    ctx.lineWidth = 1;
+
+    for(let k=1;k<=4;k++){
+      const rr = R*(k/4);
+      ctx.beginPath();
+      for(let i=0;i<n;i++){
+        const p = polar(i, rr);
+        if(i===0) ctx.moveTo(p.x,p.y);
+        else ctx.lineTo(p.x,p.y);
+      }
+      ctx.closePath();
+      ctx.stroke();
+    }
+
+    for(let i=0;i<n;i++){
+      const p = polar(i, R);
+      ctx.beginPath();
+      ctx.moveTo(cx,cy);
+      ctx.lineTo(p.x,p.y);
+      ctx.stroke();
+    }
+
+    ctx.fillStyle = "rgba(122,167,255,.22)";
+    ctx.strokeStyle = "rgba(122,167,255,.90)";
+    ctx.lineWidth = 2;
+
+    ctx.beginPath();
+    for(let i=0;i<n;i++){
+      const p = polar(i, R*scores01[i]);
+      if(i===0) ctx.moveTo(p.x,p.y);
+      else ctx.lineTo(p.x,p.y);
+    }
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = "rgba(233,238,252,.92)";
+    ctx.font = "12px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial";
+    for(let i=0;i<n;i++){
+      const p = polar(i, R + 22);
+      const label = DIMENSIONS[i].name;
+      const maxWidth = 160;
+      const lines = wrapText(ctx, label, maxWidth);
+
+      const dx = p.x - cx;
+      const dy = p.y - cy;
+      let x = p.x;
+      let y = p.y;
+
+      if(dx > 20) x += 4;
+      if(dx < -20) x -= 4;
+      if(dy > 20) y += 6;
+      if(dy < -20) y -= 6;
+
+      ctx.textAlign = (dx > 30) ? "left" : (dx < -30 ? "right" : "center");
+      ctx.textBaseline = "middle";
+
+      for(let j=0;j<lines.length;j++){
+        ctx.fillText(lines[j], x, y + (j*14));
+      }
+    }
+  }
+
+  function wrapText(ctx, text, maxWidth){
+    const words = text.split(" ");
+    const lines = [];
+    let line = "";
+    for(let i=0;i<words.length;i++){
+      const test = (line ? line + " " : "") + words[i];
+      const w = ctx.measureText(test).width;
+      if(w > maxWidth && line){
+        lines.push(line);
+        line = words[i];
+      } else {
+        line = test;
+      }
+    }
+    if(line) lines.push(line);
+    return lines.slice(0,2);
+  }
+
+  function buildReportDoc(meta, scores01, profileRanked, bestAndPlan){
+    const best = bestAndPlan.best;
+    const plan = bestAndPlan.plan;
+
+    const dimsTable = DIMENSIONS.map((d,i)=>{
+      const pct = Math.round(scores01[i]*100);
+      const b = band01(scores01[i]).t;
+      const m = practicalMeaning(d.id, scores01[i]);
+      return `
+        <tr>
+          <td style="padding:8px; border:1px solid #ddd;"><b>${d.name}</b><br/><span style="color:#444;">${d.desc}</span></td>
+          <td style="padding:8px; border:1px solid #ddd; text-align:center;">${pct}%</td>
+          <td style="padding:8px; border:1px solid #ddd;">${b}</td>
+          <td style="padding:8px; border:1px solid #ddd;">
+            1. ${m[0]}<br/>
+            2. ${m[1]}
+          </td>
+        </tr>
+      `;
+    }).join("");
+
+    const priorities = plan.lowDims.length ? plan.lowDims.map(id => DIMENSIONS.find(d=>d.id===id).name).join(", ") : "Καμία χαμηλή προτεραιότητα.";
+    const smartGoals = plan.smartGoals.map(g => `<div>${g}</div>`).join("");
+
+    const cost = plan.sessions * 50;
+
+    const mappingText = `
+      <h2 style="margin:18px 0 8px;">Τι μετράμε και με τι αντιστοιχεί</h2>
+      <p>Η αξιολόγηση είναι screening για mentoring και ανάπτυξη δεξιοτήτων.</p>
+      <p>Η αξιολόγηση δεν αποτελεί κλινική διάγνωση και δεν αντικαθιστά κλινική εκτίμηση.</p>
+      <p>Η αξιολόγηση στοχεύει σε πρακτικό προφίλ για μελέτη, ρυθμό, και ανθεκτικότητα.</p>
+
+      <h3 style="margin:14px 0 6px;">Πώς να διαβαστούν οι διαστάσεις</h3>
+      <p>Η αξιολόγηση χαρτογραφεί εκκίνηση και αυτορρύθμιση, στόχους, προσοχή, ρύθμιση συναισθήματος, ανοχή δυσφορίας, κοινωνική στήριξη, ζήτηση βοήθειας, και ανάκαμψη.</p>
+      <p>Οι διαστάσεις οδηγούν σε προτεραιότητες και σε SMART στόχους, ώστε να γίνει πρακτική βελτιστοποίηση.</p>
+
+      <h3 style="margin:14px 0 6px;">Πώς δένει με SARIM</h3>
+      <p>Ο πρώτος στόχος είναι να εντοπιστούν μοτίβα που αυξάνουν τον φοιτητικό φόρτο.</p>
+      <p>Ο δεύτερος στόχος είναι να γίνει στοχοθεσία με μικρά βήματα, ώστε να μειωθεί το ρίσκο αποτυχίας.</p>
+      <p>Ο τρίτος στόχος είναι να μπει κύκλος παρακολούθησης, ώστε να φαίνεται πρόοδος με πράξεις.</p>
+    `;
+
+    const scientificThirdPerson = `
+      <h2 style="margin:18px 0 8px;">Επιστημονική βάση και ερμηνευτικό πλαίσιο</h2>
+      <p>Η παρούσα αξιολόγηση έχει στόχο να χαρτογραφήσει δεξιότητες αυτορρύθμισης και προσαρμοστικής λειτουργικότητας στη φοιτητική ζωή.</p>
+      <p>Η αξιολόγηση δεν αποτελεί ψυχιατρική ή ψυχοπαθολογική διάγνωση.</p>
+      <p>Η αξιολόγηση χρησιμοποιείται για mentoring και για στοχευμένη βελτιστοποίηση δεξιοτήτων.</p>
+
+      <p>Ο ή η συμμετέχων απαντά σε δηλώσεις που αφορούν μελέτη, συγκέντρωση, διαχείριση άγχους, ανοχή δυσφορίας, κοινωνική στήριξη, ζήτηση βοήθειας, και ανάκαμψη.</p>
+      <p>Οι δηλώσεις δίνουν δείκτες που συνδέονται με αυτορρυθμιζόμενη μάθηση και με μηχανισμούς αλλαγής συμπεριφοράς μέσω στόχων.</p>
+      <p>Η ερμηνεία μετατρέπεται σε πρακτικά βήματα με SMART στόχους και μικροδεσμεύσεις.</p>
+
+      <p>Η λογική του προφίλ βασίζεται σε αντιστοίχιση μοτίβου με cosine similarity.</p>
+      <p>Η μέθοδος συγκρίνει διάνυσμα δεξιοτήτων με target profiles, ώστε να προκύψει το κοντινότερο αναπτυξιακό προφίλ.</p>
+
+      <p style="margin-top:10px;"><b>Ενδεικτικές αναφορές</b></p>
+      <p style="margin:6px 0;">Zimmerman, B. J. (2002). Becoming a self-regulated learner: An overview. Theory Into Practice, 41(2), 64–70. https://doi.org/10.1207/s15430421tip4102_2</p>
+      <p style="margin:6px 0;">Steel, P. (2007). The nature of procrastination. Psychological Bulletin, 133(1), 65–94. https://doi.org/10.1037/0033-2909.133.1.65</p>
+      <p style="margin:6px 0;">Gross, J. J., &amp; John, O. P. (2003). Individual differences in two emotion regulation processes. Journal of Personality and Social Psychology, 85(2), 348–362. https://doi.org/10.1037/0022-3514.85.2.348</p>
+      <p style="margin:6px 0;">Gollwitzer, P. M. (1999). Implementation intentions: Strong effects of simple plans. American Psychologist, 54(7), 493–503. https://doi.org/10.1037/0003-066X.54.7.493</p>
+      <p style="margin:6px 0;">Locke, E. A., &amp; Latham, G. P. (2002). Goal setting and task motivation. American Psychologist, 57(9), 705–717. https://doi.org/10.1037//0003-066X.57.9.705</p>
+      <p style="margin:6px 0;">Miyake, A., et al. (2000). Executive functions. Cognitive Psychology, 41(1), 49–100. https://doi.org/10.1006/cogp.1999.0734</p>
+      <p style="margin:6px 0;">Simons, J. S., &amp; Gaher, R. M. (2005). Distress tolerance. Motivation and Emotion, 29, 83–102. https://doi.org/10.1007/s11031-005-7955-3</p>
+    `;
+
+    const html = `
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <title>Αναφορά Φοιτητικής Ολιστικής Συμπεριφορικής Παρέμβασης</title>
+      </head>
+      <body style="font-family:Arial; font-size:12pt; line-height:1.35; color:#111;">
+        <h1 style="margin:0 0 8px;">Αναφορά Ολιστικού Προφίλ Φοιτητή ή Φοιτήτριας</h1>
+        <p style="margin:0 0 10px;">Ημερομηνία. ${meta.date}</p>
+
+        <h2 style="margin:18px 0 8px;">Σκοπός αξιολόγησης</h2>
+        <p>Η αξιολόγηση στοχεύει σε πρακτικό screening για μελέτη, ανθεκτικότητα, και στήριξη.</p>
+        <p>Το αποτέλεσμα δεν αποτελεί κλινική διάγνωση και δεν αντικαθιστά κλινική εκτίμηση.</p>
+
+        <h2 style="margin:18px 0 8px;">Στοιχεία</h2>
+        <p>Ονοματεπώνυμο. ${escapeHtml(meta.name)}</p>
+        <p>Email συμμετέχοντα. ${escapeHtml(meta.email)}</p>
+        <p>Τμήμα ή Σχολή. ${escapeHtml(meta.school)}</p>
+        <p>Στόχος 4 εβδομάδων. ${escapeHtml(meta.goal)}</p>
+        <p>Σημειώσεις. ${escapeHtml(meta.notes)}</p>
+
+        ${mappingText}
+        ${scientificThirdPerson}
+
+        <h2 style="margin:18px 0 8px;">Αποτελέσματα και προφίλ</h2>
+        <p><b>Κοντινότερο προφίλ.</b> ${best.name}. ${best.tagline}</p>
+        <p><b>Ομοιότητα μοτίβου.</b> ${(profileRanked[0].score*100).toFixed(1)}%</p>
+
+        <h3 style="margin:14px 0 6px;">Πίνακας διαστάσεων</h3>
+        <table style="width:100%; border-collapse:collapse;">
+          <tr>
+            <th style="text-align:left; padding:8px; border:1px solid #ddd;">Διάσταση</th>
+            <th style="text-align:center; padding:8px; border:1px solid #ddd;">Ποσοστό</th>
+            <th style="text-align:left; padding:8px; border:1px solid #ddd;">Επίπεδο</th>
+            <th style="text-align:left; padding:8px; border:1px solid #ddd;">Τι σημαίνει πρακτικά</th>
+          </tr>
+          ${dimsTable}
+        </table>
+
+        <h2 style="margin:18px 0 8px;">Πρόταση follow up</h2>
+        <p><b>Προτεινόμενες συνεδρίες.</b> ${plan.sessions}</p>
+        <p><b>Συχνότητα.</b> ${plan.frequency}</p>
+        <p><b>Προτεραιότητες.</b> ${escapeHtml(priorities)}</p>
+        <p><b>Κοστολόγιο.</b> Αξιολόγηση 200 ευρώ. Συνεδρίες ${plan.sessions} x 50 ευρώ. Σύνολο ${cost} ευρώ.</p>
+
+        <h3 style="margin:14px 0 6px;">Στόχοι SMART</h3>
+        <div>${smartGoals}</div>
+
+        <h3 style="margin:14px 0 6px;">Σημείωση ασφάλειας</h3>
+        <p>Αν υπάρχουν ενδείξεις σοβαρής επιβάρυνσης ή κινδύνου, προτείνεται άμεση κλινική εκτίμηση.</p>
+      </body>
+      </html>
+    `;
+
     return html;
   }
 
-  function validateAll() {
-    const name = document.getElementById("name").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const consent = document.getElementById("consent").checked;
-
-    if (!name || !email) return { ok: false, msg: "Συμπλήρωσε ονοματεπώνυμο και email." };
-    if (!consent) return { ok: false, msg: "Χρειάζεται συγκατάθεση για παραγωγή και αποστολή αναφοράς." };
-
-    const er = readAnswers("er");
-    const ss = readAnswers("ss");
-    const rr = readAnswers("rr");
-
-    if (!er || !ss || !rr) return { ok: false, msg: "Συμπλήρωσε όλες τις απαντήσεις πριν την ολοκλήρωση." };
-
-    return { ok: true, name, email, er, ss, rr };
+  function escapeHtml(s){
+    return String(s||"")
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
   }
 
-  function buildReportText(meta, scores) {
-    const now = new Date();
-    const stamp = now.toLocaleString("el-GR");
-
-    const erB = band(scores.erScore).label;
-    const ssB = band(scores.ssScore).label;
-    const rrB = band(scores.rrScore).label;
-    const ovB = band(scores.overall).label;
-
-    const erMeaning = practicalMeaning("er", scores.erScore);
-    const ssMeaning = practicalMeaning("ss", scores.ssScore);
-    const rrMeaning = practicalMeaning("rr", scores.rrScore);
-
-    const plan = followUpPlan(scores.erScore, scores.ssScore, scores.rrScore);
-
-    const lines = [];
-
-    lines.push("Αναφορά Screening Φοιτητικής Ολιστικής Συμπεριφορικής Παρέμβασης");
-    lines.push("Ημερομηνία και ώρα " + stamp);
-    lines.push("");
-    lines.push("Σκοπός αξιολόγησης");
-    lines.push("Η αξιολόγηση στοχεύει σε πρακτικό screening για μελέτη, ανθεκτικότητα και στήριξη.");
-    lines.push("Το αποτέλεσμα δεν αποτελεί ιατρική διάγνωση και δεν αντικαθιστά κλινική εκτίμηση.");
-    lines.push("");
-    lines.push("Στοιχεία");
-    lines.push("Ονοματεπώνυμο " + (meta.name || ""));
-    lines.push("Email " + (meta.email || ""));
-    lines.push("Σχολή ή Τμήμα " + (meta.school || ""));
-    lines.push("Έτος φοίτησης " + (meta.year || ""));
-    lines.push("Στόχος 4 εβδομάδων " + (meta.goal || ""));
-    lines.push("Σημειώσεις " + (meta.notes || ""));
-    lines.push("");
-    lines.push("Τι μετράμε και με τι αντιστοιχεί");
-    lines.push("Αυτή η αξιολόγηση είναι screening και όχι ιατρική διάγνωση.");
-    lines.push("Στόχος είναι να παραχθεί πρακτικό προφίλ για μελέτη και καθημερινότητα.");
-    lines.push("Στόχος είναι να οδηγήσει σε SMART πλάνο και σε follow up, αν χρειάζεται.");
-    lines.push("");
-    lines.push("Άξονας 1 Ρύθμιση και αντιμετώπιση πίεσης");
-    lines.push("Μετράμε πώς ξεκινά η μελέτη όταν υπάρχει στρες.");
-    lines.push("Μετράμε πώς αλλάζει η οπτική όταν κάτι φαίνεται βουνό.");
-    lines.push("Η θεματική αντιστοιχεί εννοιολογικά σε coping και επαναξιολόγηση.");
-    lines.push("");
-    lines.push("Άξονας 2 Κοινωνική στήριξη και ανήκειν");
-    lines.push("Μετράμε πόσο εύκολα ενεργοποιείται στήριξη όταν υπάρχει πίεση.");
-    lines.push("Μετράμε πόσο ασφαλές είναι να μιλήσει χωρίς φόβο κριτικής.");
-    lines.push("Η θεματική αντιστοιχεί εννοιολογικά σε απομόνωση, μοναξιά, και μοτίβα δεσμού.");
-    lines.push("");
-    lines.push("Άξονας 3 Ανάκαμψη και λειτουργική σταθερότητα");
-    lines.push("Μετράμε πόσο γρήγορα γίνεται επανεκκίνηση μετά από setback.");
-    lines.push("Μετράμε πόσο σταθερές είναι ρουτίνες που στηρίζουν ύπνο και συγκέντρωση.");
-    lines.push("Η θεματική αντιστοιχεί εννοιολογικά σε ανάκαμψη, ύπνο, και λειτουργικότητα.");
-    lines.push("");
-    lines.push("Πώς δένει με SARIM");
-    lines.push("Ο άξονας 1 αφορά εκτίμηση πίεσης και άμεση αντίδραση.");
-    lines.push("Ο άξονας 2 αφορά πόρους και κανάλια στήριξης.");
-    lines.push("Ο άξονας 3 αφορά ανάκαμψη και feedback loop μέσα στην εβδομάδα.");
-    lines.push("");
-    lines.push("Σημείωση για την αντιστοίχιση");
-    lines.push("Οι αντιστοιχίες είναι εννοιολογικές και δεν είναι ισοδυναμία τεστ.");
-    lines.push("Τα items είναι πρωτότυπα και είναι φτιαγμένα για εφαρμογή σε φοιτητικό πλαίσιο.");
-    lines.push("");
-    lines.push("Αποτελέσματα");
-    lines.push("Γενικό σκορ " + scores.overall.toFixed(2) + " Επίπεδο " + ovB);
-    lines.push("Ρύθμιση συναισθήματος " + scores.erScore.toFixed(2) + " Επίπεδο " + erB);
-    lines.push("Κοινωνική στήριξη " + scores.ssScore.toFixed(2) + " Επίπεδο " + ssB);
-    lines.push("Ανθεκτικότητα " + scores.rrScore.toFixed(2) + " Επίπεδο " + rrB);
-    lines.push("");
-    lines.push("Τι σημαίνουν πρακτικά");
-    lines.push("Ρύθμιση συναισθήματος");
-    lines.push("1 " + erMeaning[0]);
-    lines.push("2 " + erMeaning[1]);
-    lines.push("");
-    lines.push("Κοινωνική στήριξη");
-    lines.push("1 " + ssMeaning[0]);
-    lines.push("2 " + ssMeaning[1]);
-    lines.push("");
-    lines.push("Ανθεκτικότητα");
-    lines.push("1 " + rrMeaning[0]);
-    lines.push("2 " + rrMeaning[1]);
-    lines.push("");
-    lines.push("Πρόταση follow up");
-    lines.push("Προτεινόμενες συνεδρίες " + plan.sessions);
-    lines.push("Συχνότητα " + plan.frequency);
-    lines.push("Στοχοθεσία SMART");
-    plan.goals.forEach(g => lines.push(g));
-    lines.push("");
-    lines.push("Σημείωση ασφάλειας");
-    lines.push("Αν υπάρχουν ενδείξεις σοβαρής επιβάρυνσης ή κινδύνου, προτείνεται άμεση κλινική εκτίμηση.");
-
-    return lines.join("\n");
-  }
-
-  function downloadDoc(filename, text) {
-    const html = `
-      <html><head><meta charset="utf-8"></head><body>
-      <pre style="font-family: Arial, sans-serif; white-space: pre-wrap;">${escapeHtml(text)}</pre>
-      </body></html>
-    `;
-    const blob = new Blob([html], { type: "application/msword;charset=utf-8" });
+  function downloadDoc(filename, htmlContent){
+    const blob = new Blob([htmlContent], { type: "application/msword;charset=utf-8" });
     const url = URL.createObjectURL(blob);
-
     const a = document.createElement("a");
     a.href = url;
     a.download = filename;
     document.body.appendChild(a);
     a.click();
     a.remove();
-
-    setTimeout(() => URL.revokeObjectURL(url), 4000);
+    setTimeout(()=>URL.revokeObjectURL(url), 4000);
   }
 
-  function openMailTo(meta, scores) {
-    const subject = encodeURIComponent("Νέα αναφορά Φοιτητικής Ολιστικής Συμπεριφορικής Παρέμβασης");
-    const bodyLines = [];
-    bodyLines.push("Καλησπέρα.");
-    bodyLines.push("Επισυνάπτω την αναφορά screening σε αρχείο .doc.");
-    bodyLines.push("Ονοματεπώνυμο " + (meta.name || ""));
-    bodyLines.push("Email " + (meta.email || ""));
-    bodyLines.push("Γενικό σκορ " + scores.overall.toFixed(2));
-    bodyLines.push("Παρακαλώ δείτε το συνημμένο.");
-    const body = encodeURIComponent(bodyLines.join("\n"));
-    const link = "mailto:" + encodeURIComponent(DOCTOR_EMAIL) + "?subject=" + subject + "&body=" + body;
-    window.location.href = link;
+  function openEmail(meta){
+    const subject = encodeURIComponent("Υποβολή Αναφοράς Φοιτητικής Ολιστικής Συμπεριφορικής Παρέμβασης");
+    const body = encodeURIComponent(
+      "Καλησπέρα σας.\n\n" +
+      "Σας αποστέλλω την αναφορά Word από τη συμπλήρωση του ερωτηματολογίου.\n\n" +
+      "Ονοματεπώνυμο: " + (meta.name||"") + "\n" +
+      "Email συμμετέχοντα: " + (meta.email||"") + "\n" +
+      "Τμήμα ή Σχολή: " + (meta.school||"") + "\n" +
+      "Στόχος 4 εβδομάδων: " + (meta.goal||"") + "\n\n" +
+      "Παρακαλώ βρείτε επισυναπτόμενο το αρχείο.\n"
+    );
+
+    const mailto = `mailto:${EMAIL_TO}?subject=${subject}&body=${body}`;
+    window.location.href = mailto;
   }
 
-  function computeScores(er, ss, rr) {
-    const erScore = mean(er);
-    const ssScore = mean(ss);
-    const rrScore = mean(rr);
-    const overall = mean([erScore, ssScore, rrScore]);
-    return { erScore, ssScore, rrScore, overall };
+  function scrollToTop(){
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  document.getElementById("previewBtn").addEventListener("click", () => {
-    const v = validateAll();
-    if (!v.ok) {
-      document.getElementById("resultsBox").innerHTML = escapeHtml(v.msg);
-      return;
-    }
-    const scores = computeScores(v.er, v.ss, v.rr);
-    document.getElementById("resultsBox").innerHTML = buildPreviewHtml(scores.erScore, scores.ssScore, scores.rrScore, scores.overall);
+  let lastComputed = null;
+
+  function computeAndShow(){
+    if(!requireConsent()) return;
+    if(!ensureComplete()) return;
+
+    const meta = getMeta();
+    const { scores } = computeDimensionScores();
+
+    const vec = scores.slice();
+    const ranked = pickProfile(vec);
+
+    resultsCard.style.display = "block";
+    const bestAndPlan = renderResults(meta, scores, ranked);
+
+    lastComputed = { meta, scores, ranked, bestAndPlan };
+
+    resultsCard.scrollIntoView({ behavior:"smooth", block:"start" });
+  }
+
+  startBtn.addEventListener("click", () => {
+    if(!requireConsent()) return;
+    buildQuestionnaire();
+    qCard.style.display = "block";
+    qCard.scrollIntoView({ behavior:"smooth", block:"start" });
   });
 
-  document.getElementById("submitBtn").addEventListener("click", async () => {
-    const statusEl = document.getElementById("status");
-    statusEl.textContent = "";
-
-    const v = validateAll();
-    if (!v.ok) {
-      statusEl.textContent = v.msg;
+  previewBtn.addEventListener("click", () => {
+    if(!requireConsent()) return;
+    if(qCard.style.display === "none"){
+      buildQuestionnaire();
+      qCard.style.display = "block";
+      qCard.scrollIntoView({ behavior:"smooth", block:"start" });
       return;
     }
+    alert("Συμπλήρωση και μετά Υπολογισμός προφίλ.");
+  });
 
-    const meta = {
-      name: document.getElementById("name").value.trim(),
-      email: document.getElementById("email").value.trim(),
-      school: document.getElementById("school").value.trim(),
-      year: document.getElementById("year").value.trim(),
-      goal: document.getElementById("goal").value.trim(),
-      notes: document.getElementById("notes").value.trim()
-    };
+  calcBtn.addEventListener("click", computeAndShow);
 
-    const scores = computeScores(v.er, v.ss, v.rr);
-    const reportText = buildReportText(meta, scores);
+  toTopBtn.addEventListener("click", scrollToTop);
 
-    const safeName = (meta.name || "report").replace(/[^\p{L}\p{N}\s]/gu, "").trim().slice(0, 60) || "report";
-    const filename = "Αναφορά_" + safeName + ".doc";
-
-    downloadDoc(filename, reportText);
-
-    try {
-      await navigator.clipboard.writeText(reportText);
-    } catch (e) {
+  downloadOnlyBtn.addEventListener("click", () => {
+    if(!lastComputed){
+      alert("Πρώτα υπολογισμός προφίλ.");
+      return;
     }
+    const meta = lastComputed.meta;
+    const fileName = "αναφορά_φοιτητικής_παρέμβασης.doc";
+    const docHtml = buildReportDoc(meta, lastComputed.scores, lastComputed.ranked, lastComputed.bestAndPlan);
+    downloadDoc(fileName, docHtml);
+  });
+
+  finishBtn.addEventListener("click", () => {
+    if(!lastComputed){
+      computeAndShow();
+      if(!lastComputed) return;
+    }
+    const meta = lastComputed.meta;
+    const fileName = "αναφορά_φοιτητικής_παρέμβασης.doc";
+    const docHtml = buildReportDoc(meta, lastComputed.scores, lastComputed.ranked, lastComputed.bestAndPlan);
+
+    downloadDoc(fileName, docHtml);
 
     alert("Ευχαριστούμε για την υποβολή. Επικοινωνείστε με τον Δρ Χιώνη παρακαλούμε.");
 
-    openMailTo(meta, scores);
-
-    statusEl.textContent = "Κατέβηκε η αναφορά και άνοιξε email. Επισύναψε το αρχείο και στείλε.";
+    openEmail(meta);
   });
 
-  renderScale("erItems", "er");
-  renderScale("ssItems", "ss");
-  renderScale("rrItems", "ss"); // guard against accidental wrong id call
-  renderScale("rrItems", "rr");
 </script>
 </body>
 </html>
-
